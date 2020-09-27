@@ -1,6 +1,7 @@
 const express = require('express')
 const fs = require('fs');
 const path = require('path')
+const Bundler = require('parcel-bundler');
 
 const app = express();
 const port = 3000;
@@ -32,6 +33,9 @@ app.use(async (req, res, next) => {
         next(error)
     }
 })
+
+const bundler = new Bundler(path.join(__dirname, 'public/index.html'), {})
+app.use(bundler.middleware());
 
 app.use(express.static('public'))
 
