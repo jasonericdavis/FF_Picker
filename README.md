@@ -1,4 +1,4 @@
-# DK_Picker
-DraftKings Draft picker
+# Fanatasy Football Picker
+Fantasy Football picker
 
 Data courtesy of **[pro-football-reference.com](https://www.pro-football-reference.com/years/2020/fantasy.htm)**
