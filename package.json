@@ -8,7 +8,8 @@
     "nodemon": "^2.0.4"
   },
   "devDependencies": {
-    "parcel-bundler": "^1.12.4"
+    "parcel-bundler": "^1.12.4",
+    "node-forge": ">=0.10.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -25,12 +26,10 @@
     "url": "https://github.com/jasonericdavis/DK_Picker/issues"
   },
   "homepage": "https://github.com/jasonericdavis/DK_Picker#readme",
-  
   "@comment browserslists": [
     "I dont like having to adding this but for some reason",
     "async doesnt work with parcel out of the box"
   ],
-  
   "browserslist": [
     "Chrome 78"
   ]
