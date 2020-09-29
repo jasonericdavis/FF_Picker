@@ -2,9 +2,11 @@ const express = require('express')
 const fs = require('fs');
 const path = require('path')
 const Bundler = require('parcel-bundler');
+const getParseData = require('./src/getPFParseData')
 
 const app = express();
 const port = 3000;
+
 
 
 /*  
@@ -15,7 +17,7 @@ const port = 3000;
 app.use(async (req, res, next) => {
     try {
         if(req.path.endsWith('.csv')) {
-            const filename = path.join(__dirname,'public',req.path)
+            const filename = path.join(__dirname,'data',req.path)
             if(fs.existsSync(filename)){
                 // asynchronously read the file 
                 // the await command causes the program to leave from this 
@@ -34,10 +36,17 @@ app.use(async (req, res, next) => {
     }
 })
 
-const bundler = new Bundler(path.join(__dirname, 'public/index.html'), {})
-app.use(bundler.middleware());
+// const bundler = new Bundler(path.join(__dirname, 'public/index.html'), {})
+// app.use(bundler.middleware());
 
 app.use(express.static('public'))
+
+app.get('/1', (req, res) => {
+    getParseData.getOffense()
+    .then(data => {
+        res.send(data)
+    })
+})
 
 app.listen(port, () => {
     console.log(`App started on port: ${port}`)

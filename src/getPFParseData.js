@@ -1,6 +1,9 @@
-import getCSVData from './getCSVData'
+//import getCSVData from './getCSVData'
+const fs = require('fs').promises;
+const path = require('path')
 
-const fileUrl = '/pfr.csv'
+const offenseFileUrl = '/pfW3Offense.csv'
+const deffenseFileUrl = '/pfW3Defense.csv'
 const ignoreColumns = [];
 
 const extractPlayerName = (cols, columns) => cols[columns['Player']].split('\\')[0]
@@ -35,12 +38,12 @@ const rbCols = {
 const recieverCols = {
     'Targets':'Tgt',
     'Receptions': 'Rec',
-    'Yards': 'Yards_2',
+    'Yards': 'Yds_2',
     'Average': 'Y/R',
     'Touchdowns': 'TD_2'
 }
 
-export const parseData = (data) => {
+const parseOffensiveData = (data) => {
     let lines = data.split('\n')
     let columns = {};
     let players = [];
@@ -57,13 +60,18 @@ export const parseData = (data) => {
             cols.map((col, colIndex) => {
                 let tempColName = col
                 let colNameCounter = 0
+
+                /**  
+                 * Because the name of a column can appear multiple times in the list of columns
+                 * this logic will append a suffix to the column if it is already in the list of columns
+                 * */ 
                 while(columns[`${tempColName}`]) {
                     colNameCounter += 1
                     tempColName = `${tempColName.replace(`_${colNameCounter - 1}`, '')}_${colNameCounter}`             
                 } 
                 columns[tempColName ] = colIndex
             })
-            console.log(columns)
+            // console.log(columns)
             return
         } else { 
             //use the columns to create an object for each player and push into array
@@ -134,4 +142,59 @@ export const parseData = (data) => {
     return {qbs, rbs, wrs, tes}
 }
 
-export default () => getCSVData(fileUrl).then(data => parseData(data))
+const parseDefensiveData = (data) => {
+    let lines = data.split('\n')
+    let columns = {};
+    let defenses = [];
+
+    lines.map((line, index) => {
+        // the first line contains the keys
+        const cols = line.split(',')
+        if(index < 1) {
+            cols.map((col, colIndex) => {
+                let tempColName = col
+                let colNameCounter = 0
+
+                /**  
+                 * Because the name of a column can appear multiple times in the list of columns
+                 * this logic will append a suffix to the column if it is already in the list of columns
+                 * */ 
+                while(columns[`${tempColName}`]) {
+                    colNameCounter += 1
+                    tempColName = `${tempColName.replace(`_${colNameCounter - 1}`, '')}_${colNameCounter}`             
+                } 
+                columns[tempColName ] = colIndex
+            })
+            console.log(columns)
+            return
+        } else { 
+            let newDefense = {}
+            newDefense['Team'] = cols[columns['Tm']]
+            newDefense['PointsAllowed'] = cols[columns['PF']]
+            newDefense['TotalYards'] = cols[columns['Yds']]
+            newDefense['TakeAways'] = cols[columns['TO']]
+            newDefense['Fumbles'] = cols[columns['FL']]
+            newDefense['PassingAttempts'] = cols[columns['Att']]
+            newDefense['Interceptions'] = cols[columns['Int']]
+            newDefense['PassingYards'] = cols[columns['Yds_1']]
+            newDefense['PassingTouchdowns'] = cols[columns['TD']]
+            newDefense['RusingAttempts'] = cols[columns['Att_1']]
+            newDefense['RushingYards'] = cols[columns['Yds_2']]
+            newDefense['RushingTouchdowns'] = cols[columns['TD_1']]
+            defenses.push(newDefense)
+        }
+    })
+    return defenses
+}
+
+// export const getOffense = () => getCSVData(offenseFileUrl).then(data => parseOffensiveData(data))
+// export const getDefense = () => getCSVData(deffenseFileUrl).then(data => parseDefensiveData(data))
+
+
+const getCSVData =  async (filename, callback) => {
+    const filepath = path.join(process.cwd(), 'data', filename)
+    return await fs.readFile(filepath, 'utf8')
+}
+
+exports.getOffense = () => getCSVData(offenseFileUrl).then(data => parseOffensiveData(data)),
+exports.getDefense = () => getCSVData(deffenseFileUrl).then(data => parseDefensiveData(data))
