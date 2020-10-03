@@ -8,7 +8,7 @@ const app = express();
 const port = 3000;
 
 
-
+try {
 /*  
 *   This middleware goes before the static middleware
 *   Becuase if the file exist then it will send the response and 
@@ -42,12 +42,21 @@ app.use(async (req, res, next) => {
 app.use(express.static('public'))
 
 app.get('/1', (req, res) => {
-    getParseData.getOffense()
+    getParseData.getData()
     .then(data => {
         res.send(data)
     })
+    .catch(error => 
+        res.send(`There was an error: ${error}`)
+    )
+    return
 })
 
 app.listen(port, () => {
     console.log(`App started on port: ${port}`)
 })
+
+}
+catch(err) {
+    console.log(err)
+}

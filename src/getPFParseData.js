@@ -1,6 +1,7 @@
 //import getCSVData from './getCSVData'
 const fs = require('fs').promises;
 const path = require('path')
+const nicknames = require('./nicknames.json')
 
 const offenseFileUrl = '/pfW3Offense.csv'
 const deffenseFileUrl = '/pfW3Defense.csv'
@@ -187,14 +188,38 @@ const parseDefensiveData = (data) => {
     return defenses
 }
 
-// export const getOffense = () => getCSVData(offenseFileUrl).then(data => parseOffensiveData(data))
-// export const getDefense = () => getCSVData(deffenseFileUrl).then(data => parseDefensiveData(data))
-
+const parseSchedule = data => {
+    const lines = data.split('\n')
+    const games = [];
+    lines.map((line, index) => {
+        const cols = line.split(',')
+        if(cols[0] != '4') {
+            return
+        }
+        
+        games.push({
+            home: cols[4],
+            away: cols[6]
+        })
+        // cols.map((column) => {
+            
+        // })    
+    })
+    return games
+}
 
 const getCSVData =  async (filename, callback) => {
     const filepath = path.join(process.cwd(), 'data', filename)
     return await fs.readFile(filepath, 'utf8')
 }
 
-exports.getOffense = () => getCSVData(offenseFileUrl).then(data => parseOffensiveData(data)),
-exports.getDefense = () => getCSVData(deffenseFileUrl).then(data => parseDefensiveData(data))
+const getOffense =  () => getCSVData(offenseFileUrl).then(data => parseOffensiveData(data));
+const getDeffense = () => getCSVData(deffenseFileUrl).then(data => parseDefensiveData(data));
+const getSchedule = () => getCSVData('pfSchedule.csv').then(data => parseSchedule(data))
+
+exports.getData = async () => ({
+    offense: await getOffense().then(data => data),
+    defense: await getDeffense().then(data => data),
+    schedule: await getSchedule().then(data => data),
+    nicknames: nicknames
+})
