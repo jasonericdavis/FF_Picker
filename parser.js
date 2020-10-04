@@ -1,3 +1,16 @@
+const fs = require('fs');
+const path = require('path')
 const getParseData = require('./src/getPFParseData')
 console.log("hello people")
-getParseData.getOffense().then(data => console.log(data))
+getParseData.getData()
+    .then(data => {
+        const filename = path.join(__dirname, 'public/data.json')
+        console.log(`writing to: ${filename}`)
+        fs.writeFile(filename, JSON.stringify(data), (error) => {
+            console.log(`there was an error writing to file(${filename}): ${error}`)
+        })
+        //console.log(data)
+    })
+    .catch(error => 
+        console.log(`There was an error: ${error}`)
+    )

@@ -3,8 +3,9 @@ const fs = require('fs').promises;
 const path = require('path')
 const nicknames = require('./nicknames.json')
 
-const offenseFileUrl = '/pfW3Offense.csv'
-const deffenseFileUrl = '/pfW3Defense.csv'
+const playersFilename = '/pfW3bPlayers.csv'
+const teamOffenseFilename = 'pfW3bTeamOffense.csv'
+const teamDefenseFilename = '/pfW3bTeamDefense.csv'
 const ignoreColumns = [];
 
 const extractPlayerName = (cols, columns) => cols[columns['Player']].split('\\')[0]
@@ -44,7 +45,7 @@ const recieverCols = {
     'Touchdowns': 'TD_2'
 }
 
-const parseOffensiveData = (data) => {
+const parsePlayerData = (data) => {
     let lines = data.split('\n')
     let columns = {};
     let players = [];
@@ -143,6 +144,48 @@ const parseOffensiveData = (data) => {
     return {qbs, rbs, wrs, tes}
 }
 
+const parseOffensiveData = (data) => {
+    let lines = data.split('\n')
+    let columns = {};
+    let offenses = [];
+
+    lines.map((line, index) => {
+        // the first line contains the keys
+        const cols = line.split(',')
+        if(index < 1) {
+            cols.map((col, colIndex) => {
+                let tempColName = col
+                let colNameCounter = 0
+
+                /**  
+                 * Because the name of a column can appear multiple times in the list of columns
+                 * this logic will append a suffix to the column if it is already in the list of columns
+                 * */ 
+                while(columns[`${tempColName}`]) {
+                    colNameCounter += 1
+                    tempColName = `${tempColName.replace(`_${colNameCounter - 1}`, '')}_${colNameCounter}`             
+                } 
+                columns[tempColName ] = colIndex
+            })
+            console.log(columns)
+            return
+        } else { 
+            let newOffense = {}
+            newOffense['Team'] = cols[columns['Tm']]
+            newOffense['PassingCompletions'] = cols[columns['Cmp']]
+            newOffense['PassingAttempts'] = cols[columns['Att']]
+            newOffense['PassingYards'] = cols[columns['Yds_1']]
+            newOffense['PassingTouchdowns'] = cols[columns['TD']]
+            newOffense['Interceptions'] = cols[columns['Int']]
+            newOffense['RushingAttempts'] = cols[columns['Att_1']]
+            newOffense['RushingYards'] = cols[columns['Yds_2']]
+            newOffense['RushingTouchdowns'] = cols[columns['TD_1']]
+            offenses.push(newOffense)
+        }
+    })
+    return offenses
+}
+
 const parseDefensiveData = (data) => {
     let lines = data.split('\n')
     let columns = {};
@@ -179,7 +222,7 @@ const parseDefensiveData = (data) => {
             newDefense['Interceptions'] = cols[columns['Int']]
             newDefense['PassingYards'] = cols[columns['Yds_1']]
             newDefense['PassingTouchdowns'] = cols[columns['TD']]
-            newDefense['RusingAttempts'] = cols[columns['Att_1']]
+            newDefense['RushingAttempts'] = cols[columns['Att_1']]
             newDefense['RushingYards'] = cols[columns['Yds_2']]
             newDefense['RushingTouchdowns'] = cols[columns['TD_1']]
             defenses.push(newDefense)
@@ -213,11 +256,13 @@ const getCSVData =  async (filename, callback) => {
     return await fs.readFile(filepath, 'utf8')
 }
 
-const getOffense =  () => getCSVData(offenseFileUrl).then(data => parseOffensiveData(data));
-const getDeffense = () => getCSVData(deffenseFileUrl).then(data => parseDefensiveData(data));
-const getSchedule = () => getCSVData('pfSchedule.csv').then(data => parseSchedule(data))
+const getPlayers =  () => getCSVData(playersFilename).then(data => parsePlayerData(data));
+const getOffense = () => getCSVData(teamOffenseFilename).then(data => parseOffensiveData(data));
+const getDeffense = () => getCSVData(teamDefenseFilename).then(data => parseDefensiveData(data));
+const getSchedule = () => getCSVData('pfSchedule.csv').then(data => parseSchedule(data));
 
 exports.getData = async () => ({
+    players: await getPlayers().then(data => data),
     offense: await getOffense().then(data => data),
     defense: await getDeffense().then(data => data),
     schedule: await getSchedule().then(data => data),

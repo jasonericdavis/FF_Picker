@@ -2,13 +2,12 @@ const express = require('express')
 const fs = require('fs');
 const path = require('path')
 const Bundler = require('parcel-bundler');
-const getParseData = require('./src/getPFParseData')
+const getParseData = require('./src/getPFParseData');
+const { exit } = require('process');
 
 const app = express();
 const port = 3000;
 
-
-try {
 /*  
 *   This middleware goes before the static middleware
 *   Becuase if the file exist then it will send the response and 
@@ -36,10 +35,13 @@ app.use(async (req, res, next) => {
     }
 })
 
-// const bundler = new Bundler(path.join(__dirname, 'public/index.html'), {})
-// app.use(bundler.middleware());
-
 app.use(express.static('public'))
+
+const bundler = new Bundler(path.join(__dirname, 'public/index.html'), {})
+app.use(bundler.middleware());
+
+// app.use(express.static('dist'))
+// app.use(express.static('public'))
 
 app.get('/1', (req, res) => {
     getParseData.getData()
@@ -52,11 +54,6 @@ app.get('/1', (req, res) => {
     return
 })
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`App started on port: ${port}`)
 })
-
-}
-catch(err) {
-    console.log(err)
-}
