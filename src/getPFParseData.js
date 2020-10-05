@@ -3,9 +3,10 @@ const fs = require('fs').promises;
 const path = require('path')
 const nicknames = require('./nicknames.json')
 
-const playersFilename = '/pfW3bPlayers.csv'
+const playersFilename = 'pfW3bPlayers.csv'
 const teamOffenseFilename = 'pfW3bTeamOffense.csv'
-const teamDefenseFilename = '/pfW3bTeamDefense.csv'
+const teamDefenseFilename = 'pfW3bTeamDefense.csv'
+const scheduleFilename = 'pfSchedule.csv'
 const ignoreColumns = [];
 
 const extractPlayerName = (cols, columns) => cols[columns['Player']].split('\\')[0]
@@ -259,7 +260,7 @@ const getCSVData =  async (filename, callback) => {
 const getPlayers =  () => getCSVData(playersFilename).then(data => parsePlayerData(data));
 const getOffense = () => getCSVData(teamOffenseFilename).then(data => parseOffensiveData(data));
 const getDeffense = () => getCSVData(teamDefenseFilename).then(data => parseDefensiveData(data));
-const getSchedule = () => getCSVData('pfSchedule.csv').then(data => parseSchedule(data));
+const getSchedule = () => getCSVData(scheduleFilename).then(data => parseSchedule(data));
 
 exports.getData = async () => ({
     players: await getPlayers().then(data => data),
