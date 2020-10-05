@@ -9,7 +9,6 @@ getParseData.getData()
         fs.writeFile(filename, JSON.stringify(data), (error) => {
             console.log(`there was an error writing to file(${filename}): ${error}`)
         })
-        //console.log(data)
     })
     .catch(error => 
         console.log(`There was an error: ${error}`)
