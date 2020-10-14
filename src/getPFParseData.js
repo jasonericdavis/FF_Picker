@@ -3,9 +3,9 @@ const fs = require('fs').promises;
 const path = require('path')
 const nicknames = require('./nicknames.json')
 
-const playersFilename = 'pfW3bPlayers.csv'
-const teamOffenseFilename = 'pfW3bTeamOffense.csv'
-const teamDefenseFilename = 'pfW3bTeamDefense.csv'
+const playersFilename = 'pfW4Players.csv'
+const teamOffenseFilename = 'pfW4TeamOffense.csv'
+const teamDefenseFilename = 'pfW4TeamDefense.csv'
 const scheduleFilename = 'pfSchedule.csv'
 const ignoreColumns = [];
 
@@ -46,15 +46,32 @@ const recieverCols = {
     'Touchdowns': 'TD_2'
 }
 
+const statColumns = {
+    'Completions': 'Cmp',
+    'PassingAttempts': 'Att',
+    'PassingYards':'Yds',
+    'PassingTouchdowns': 'Td',
+    'Int': 'Int',
+    'Attempts': 'Att_1',
+    'RushingYards': 'Yds_1',
+    'RushingAverage': 'Y/A',
+    'RushingTouchdowns': 'TD_1',
+    'Targets':'Tgt',
+    'Receptions': 'Rec',
+    'ReceivingYards': 'Yds_2',
+    'ReceivingAverage': 'Y/R',
+    'ReceivingTouchdowns': 'TD_2'
+}
+
 const parsePlayerData = (data) => {
     let lines = data.split('\n')
     let columns = {};
-    let players = [];
+    let players = {};
     let matchups = {}
-    let qbs = [];
-    let rbs = [];
-    let wrs = [];
-    let tes = [];
+    let qbs = {};
+    let rbs = {};
+    let wrs = {};
+    let tes = {};
 
     lines.map((line, index) => {
         // the first line contains the keys
@@ -90,42 +107,33 @@ const parsePlayerData = (data) => {
             newPlayer['Id'] = extractPlayerId(cols, columns)
             newPlayer['Position'] = cols[columns['FantPos']]
             newPlayer['FantasyPoints'] = cols[columns['FantPt']]
+            newPlayer['Team'] = cols[columns['Tm']]
+            newPlayer['TeamNickname'] = nicknames[newPlayer['Team']]
+            players[newPlayer['Id']] = extractPositionColumns(newPlayer, statColumns, cols, columns)
 
-            if(newPlayer['Position'] === 'QB') {         
-                // for (const outputColumn in qbCols) {
-                //     /**
-                //      * This is probably some premature optimization but what I am doing
-                //      * here is defining the columns to look for in qbCols 
-                //      */
-                //     newPlayer[outputColumn] = cols[columns[qbCols[outputColumn]]]
-                // }
-                // qbs.push(newPlayer)
-                qbs.push(
-                    extractPositionColumns(newPlayer, qbCols, cols, columns)
-                )
-                return;
-            }
+            // if(newPlayer['Position'] === 'QB') {         
+            //     qbs[newPlayer['Id']] =
+            //         extractPositionColumns(newPlayer, qbCols, cols, columns)
+            //     return;
+            // }
 
-            if(newPlayer['Position'] === 'RB') {         
-                rbs.push(
-                    extractPositionColumns(newPlayer, rbCols, cols, columns)
-                )
-                return;
-            }
+            // if(newPlayer['Position'] === 'RB') {         
+            //     rbs[newPlayer['Id']] =
+            //         extractPositionColumns(newPlayer, rbCols, cols, columns)
+            //     return;
+            // }
 
-            if(newPlayer['Position'] === 'WR') {         
-                wrs.push(
-                    extractPositionColumns(newPlayer, recieverCols, cols, columns)
-                )
-                return;
-            }
+            // if(newPlayer['Position'] === 'WR') {         
+            //     wrs[newPlayer['Id']] =
+            //         extractPositionColumns(newPlayer, recieverCols, cols, columns)
+            //     return;
+            // }
 
-            if(newPlayer['Position'] === 'TE') {         
-                tes.push(
-                    extractPositionColumns(newPlayer, recieverCols, cols, columns)
-                )
-                return;
-            }
+            // if(newPlayer['Position'] === 'TE') {         
+            //     tes[newPlayer['Id']] = 
+            //         extractPositionColumns(newPlayer, recieverCols, cols, columns)
+            //     return;
+            // }
 
             // // this will create the opponent by parsing a very specific string of T1@T2<space>DateTime
             // const opp = player['Game Info'] 
@@ -142,13 +150,13 @@ const parsePlayerData = (data) => {
 
         }
 })
-    return {qbs, rbs, wrs, tes}
+    return players
 }
 
 const parseOffensiveData = (data) => {
     let lines = data.split('\n')
     let columns = {};
-    let offenses = [];
+    let offenses = {};
 
     lines.map((line, index) => {
         // the first line contains the keys
@@ -181,7 +189,7 @@ const parseOffensiveData = (data) => {
             newOffense['RushingAttempts'] = cols[columns['Att_1']]
             newOffense['RushingYards'] = cols[columns['Yds_2']]
             newOffense['RushingTouchdowns'] = cols[columns['TD_1']]
-            offenses.push(newOffense)
+            offenses[ newOffense['Team']] = newOffense
         }
     })
     return offenses
@@ -190,7 +198,7 @@ const parseOffensiveData = (data) => {
 const parseDefensiveData = (data) => {
     let lines = data.split('\n')
     let columns = {};
-    let defenses = [];
+    let defenses = {};
 
     lines.map((line, index) => {
         // the first line contains the keys
@@ -226,35 +234,44 @@ const parseDefensiveData = (data) => {
             newDefense['RushingAttempts'] = cols[columns['Att_1']]
             newDefense['RushingYards'] = cols[columns['Yds_2']]
             newDefense['RushingTouchdowns'] = cols[columns['TD_1']]
-            defenses.push(newDefense)
+            defenses[newDefense['Team']] = newDefense
         }
     })
     return defenses
 }
 
 const parseSchedule = data => {
+    const week = '4'
     const lines = data.split('\n')
     const games = [];
     lines.map((line, index) => {
         const cols = line.split(',')
-        if(cols[0] != '4') {
-            return
-        }
+        
+        // If its not the week we are looking for skip
+        if(cols[0] != week) return
         
         games.push({
             home: cols[4],
             away: cols[6]
-        })
-        // cols.map((column) => {
-            
-        // })    
+        })   
     })
     return games
 }
 
 const getCSVData =  async (filename, callback) => {
+    console.log(`Reading CSV file: ${filename}`)
     const filepath = path.join(process.cwd(), 'data', filename)
     return await fs.readFile(filepath, 'utf8')
+}
+
+const calculateRatios = (players, offense, stat) => {
+    Object.values(players).map(player => {
+        console.log(`Geting Ratios for ${player.Name}`)
+        const playerStat = Number(player['PassingYards']) + Number(player['RushingYards']) + Number(player['ReceivingYards'])
+        const teamStat = Number(offense[player['TeamNickname']].PassingYards) + Number(offense[player['TeamNickname']].RushingYards)
+        console.log(`${player.Name} | ${playerStat} | ${teamStat}`)
+        player.Ratio = (playerStat/teamStat)
+    })
 }
 
 const getPlayers =  () => getCSVData(playersFilename).then(data => parsePlayerData(data));
@@ -262,10 +279,16 @@ const getOffense = () => getCSVData(teamOffenseFilename).then(data => parseOffen
 const getDeffense = () => getCSVData(teamDefenseFilename).then(data => parseDefensiveData(data));
 const getSchedule = () => getCSVData(scheduleFilename).then(data => parseSchedule(data));
 
-exports.getData = async () => ({
-    players: await getPlayers().then(data => data),
-    offense: await getOffense().then(data => data),
-    defense: await getDeffense().then(data => data),
-    schedule: await getSchedule().then(data => data),
-    nicknames: nicknames
-})
+exports.getData = async () => {
+    console.log('Parsing Data')
+    const players = await getPlayers().then(data => data)
+    const offense = await getOffense().then(data => data)
+    const defense = await getDeffense().then(data => data)
+    const schedule = await getSchedule().then(data => data)
+
+    console.log('Calculating Ratios')
+    calculateRatios(players, offense, '')
+
+    console.log('Data Parsing Complete')
+    return {players, offense, defense, schedule, nicknames}
+}

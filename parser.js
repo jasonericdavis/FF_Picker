@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path')
 const getParseData = require('./src/getPFParseData')
-console.log("hello people")
+
 getParseData.getData()
     .then(data => {
         const filename = path.join(__dirname, 'public/data.json')
