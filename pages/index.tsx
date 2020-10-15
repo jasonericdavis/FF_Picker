@@ -1,4 +1,6 @@
 import {useState, useEffect} from 'react'
+import Column from '../src/components/column'
+import Game from '../src/components/game'
 
 const listSize = 20;
 
@@ -19,44 +21,6 @@ const PositionList = ({players}) => {
   ))
 }
 
-const Column = ({name, children}) => (
-  <div className='rounded bg-gray-200 p-8 overflow-auto'>
-    <div className=''>
-      <h2 className='text-xl underline uppercase font-semibold'>{name}</h2>
-    </div>
-    <div>
-      {children}
-    </div>
-  </div>
-)
-
-// const Quarterbacks = ({qbs}) => (<PositionList players={qbs} />
-
-// const RunningBacks = ({rbs}) => {
-//   return rbs.map((rb, index) => (
-//     <ul>
-//       <li>{rb.Name}</li>
-//     </ul>
-//   ))
-// }
-
-// const WideReceivers = ({wrs}) => {
-//   return wrs.map((wr, index) => (
-//     <ul>
-//       <li>{wr.Name}</li>
-//     </ul>
-//   ))
-// }
-
-// const TightEnds = ({tes}) => {
-//   return tes.map((te, index) => (
-//     <ul>
-//       <li>{te.Name}</li>
-//     </ul>
-//   ))
-// }
-
-
 const HomePage = () => {
   const [data, setData] = useState(null)
 
@@ -73,8 +37,8 @@ const HomePage = () => {
       <div>Fantasy Football Picker</div>
       {(!data)? <Loading /> 
         :
-        <div>
-          <div className='flex flex-row flex-no-wrap justify-evenly h-screen p-8'>
+        <div className="p-8">
+          {/* <div className='flex flex-row flex-no-wrap justify-evenly h-screen p-8'>
             <Column name={'Quarterbacks'}>
               <PositionList players={Object.values(data.players).filter(player => player.Position == 'QB')} />
             </Column>
@@ -87,18 +51,12 @@ const HomePage = () => {
             <Column name={'Tight Ends'}>
               <PositionList players={Object.values(data.players).filter(player => player.Position == 'TE')} />
             </Column>
-          </div>
+          </div> */}
           <div>
             {data.schedule.map((game, index) => {
-              const qbs = Object.values(data.players)
+              const players = Object.values(data.players)
                 .filter(qb => qb.TeamNickname === game.home || qb.TeamNickname === game.away)
-
-              return (
-                <div>
-                  <h3 key={index}>{game.home} vs {game.away}</h3>
-                  <ul>{qbs.map((qb, index) => <li key={index} >{qb.Name}</li>)}</ul>
-                </div>
-              )
+              return <Game players={players.sort((a,b) => b.Ratio - a.Ratio)} game={game} />
             })}
           </div>
         </div>

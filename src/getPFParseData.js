@@ -3,9 +3,9 @@ const fs = require('fs').promises;
 const path = require('path')
 const nicknames = require('./nicknames.json')
 
-const playersFilename = 'pfW4Players.csv'
-const teamOffenseFilename = 'pfW4TeamOffense.csv'
-const teamDefenseFilename = 'pfW4TeamDefense.csv'
+const playersFilename = 'pfW5Players.csv'
+const teamOffenseFilename = 'pfW5TeamOffense.csv'
+const teamDefenseFilename = 'pfW5TeamDefense.csv'
 const scheduleFilename = 'pfSchedule.csv'
 const ignoreColumns = [];
 
@@ -176,19 +176,19 @@ const parseOffensiveData = (data) => {
                 } 
                 columns[tempColName ] = colIndex
             })
-            console.log(columns)
+            // console.log(columns)
             return
         } else { 
             let newOffense = {}
             newOffense['Team'] = cols[columns['Tm']]
-            newOffense['PassingCompletions'] = cols[columns['Cmp']]
-            newOffense['PassingAttempts'] = cols[columns['Att']]
-            newOffense['PassingYards'] = cols[columns['Yds_1']]
-            newOffense['PassingTouchdowns'] = cols[columns['TD']]
-            newOffense['Interceptions'] = cols[columns['Int']]
-            newOffense['RushingAttempts'] = cols[columns['Att_1']]
-            newOffense['RushingYards'] = cols[columns['Yds_2']]
-            newOffense['RushingTouchdowns'] = cols[columns['TD_1']]
+            newOffense['PassingCompletions'] = Number(cols[columns['Cmp']])
+            newOffense['PassingAttempts'] = Number(cols[columns['Att']])
+            newOffense['PassingYards'] = Number(cols[columns['Yds_1']])
+            newOffense['PassingTouchdowns'] = Number(cols[columns['TD']])
+            newOffense['Interceptions'] = Number(cols[columns['Int']])
+            newOffense['RushingAttempts'] = Number(cols[columns['Att_1']])
+            newOffense['RushingYards'] = Number(cols[columns['Yds_2']])
+            newOffense['RushingTouchdowns'] = Number(cols[columns['TD_1']])
             offenses[ newOffense['Team']] = newOffense
         }
     })
@@ -218,22 +218,22 @@ const parseDefensiveData = (data) => {
                 } 
                 columns[tempColName ] = colIndex
             })
-            console.log(columns)
+            // console.log(columns)
             return
         } else { 
             let newDefense = {}
             newDefense['Team'] = cols[columns['Tm']]
-            newDefense['PointsAllowed'] = cols[columns['PF']]
-            newDefense['TotalYards'] = cols[columns['Yds']]
-            newDefense['TakeAways'] = cols[columns['TO']]
-            newDefense['Fumbles'] = cols[columns['FL']]
-            newDefense['PassingAttempts'] = cols[columns['Att']]
-            newDefense['Interceptions'] = cols[columns['Int']]
-            newDefense['PassingYards'] = cols[columns['Yds_1']]
-            newDefense['PassingTouchdowns'] = cols[columns['TD']]
-            newDefense['RushingAttempts'] = cols[columns['Att_1']]
-            newDefense['RushingYards'] = cols[columns['Yds_2']]
-            newDefense['RushingTouchdowns'] = cols[columns['TD_1']]
+            newDefense['PointsAllowed'] = Number(cols[columns['PF']])
+            newDefense['TotalYards'] = Number(cols[columns['Yds']])
+            newDefense['TakeAways'] = Number(cols[columns['TO']])
+            newDefense['Fumbles'] = Number(cols[columns['FL']])
+            newDefense['PassingAttempts'] = Number(cols[columns['Att']])
+            newDefense['Interceptions'] = Number(cols[columns['Int']])
+            newDefense['PassingYards'] = Number(cols[columns['Yds_1']])
+            newDefense['PassingTouchdowns'] = Number(cols[columns['TD']])
+            newDefense['RushingAttempts'] = Number(cols[columns['Att_1']])
+            newDefense['RushingYards'] = Number(cols[columns['Yds_2']])
+            newDefense['RushingTouchdowns'] = Number(cols[columns['TD_1']])
             defenses[newDefense['Team']] = newDefense
         }
     })
@@ -241,7 +241,7 @@ const parseDefensiveData = (data) => {
 }
 
 const parseSchedule = data => {
-    const week = '4'
+    const week = '5'
     const lines = data.split('\n')
     const games = [];
     lines.map((line, index) => {
@@ -264,13 +264,40 @@ const getCSVData =  async (filename, callback) => {
     return await fs.readFile(filepath, 'utf8')
 }
 
-const calculateRatios = (players, offense, stat) => {
+const calculatePlayerRatios = (players, offense, stat) => {
     Object.values(players).map(player => {
         console.log(`Geting Ratios for ${player.Name}`)
         const playerStat = Number(player['PassingYards']) + Number(player['RushingYards']) + Number(player['ReceivingYards'])
         const teamStat = Number(offense[player['TeamNickname']].PassingYards) + Number(offense[player['TeamNickname']].RushingYards)
         console.log(`${player.Name} | ${playerStat} | ${teamStat}`)
         player.Ratio = (playerStat/teamStat)
+    })
+}
+
+const calculateTeamRatios = (schedule, offense, defense) => {
+    schedule.map((game) => {
+        const hOffense = offense[game.home]
+        const aOffense = offense[game.away]
+        const hDefense = defense[game.home]
+        const aDefense = defense[game.away]
+
+        const hOffenseYards = 
+            hOffense.PassingYards + hOffense.RushingYards
+        const aOffenseYards = 
+            aOffense.PassingYards + hOffense.PassingYards
+        
+        const hDefenseYards = 
+            hDefense.PassingYards + hDefense.RushingYards
+        const aDefenseYards = 
+            aDefense.PassingYards + aDefense.PassingYards
+
+        game.HomeOffensiveYards = hOffenseYards
+        game.AwayOffensiveYards = aOffenseYards
+        game.HomeDefensiveYards = hDefenseYards
+        game.AwayDefensiveYards = aDefenseYards
+        game.HomeDefensiveEffectiveness = aOffenseYards/hDefenseYards
+        game.AwayDefensiveEffectiveness = hOffenseYards/aDefenseYards
+
     })
 }
 
@@ -286,8 +313,11 @@ exports.getData = async () => {
     const defense = await getDeffense().then(data => data)
     const schedule = await getSchedule().then(data => data)
 
-    console.log('Calculating Ratios')
-    calculateRatios(players, offense, '')
+    console.log('Calculating Player Ratios')
+    calculatePlayerRatios(players, offense, '')
+
+    console.log('Calculating Team Ratios')
+    calculateTeamRatios(schedule, offense, defense)
 
     console.log('Data Parsing Complete')
     return {players, offense, defense, schedule, nicknames}
