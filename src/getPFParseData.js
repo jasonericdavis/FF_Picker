@@ -264,7 +264,7 @@ const getCSVData =  async (filename, callback) => {
     return await fs.readFile(filepath, 'utf8')
 }
 
-const calculatePlayerRatios = (players, offense, stat) => {
+const calculatePlayerRatios = (players, offense) => {
     Object.values(players).map(player => {
         console.log(`Geting Ratios for ${player.Name}`)
         const playerStat = Number(player['PassingYards']) + Number(player['RushingYards']) + Number(player['ReceivingYards'])
@@ -274,13 +274,19 @@ const calculatePlayerRatios = (players, offense, stat) => {
     })
 }
 
-const calculateTeamRatios = (schedule, offense, defense) => {
-    schedule.map((game) => {
+const parseGameData = (schedule, offense, defense, players) => {
+    let games = []
+    schedule.map((scheduledGame) => {
+        let game = {...scheduledGame}
         const hOffense = offense[game.home]
         const aOffense = offense[game.away]
         const hDefense = defense[game.home]
         const aDefense = defense[game.away]
 
+        game.Home = {Offense: {...hOffense}, Defense: {...hDefense}}
+        game.Away = {Offense: {...aOffense}, Defense: {...aDefense}} 
+
+        // Add game ratios
         const hOffenseYards = 
             hOffense.PassingYards + hOffense.RushingYards
         const aOffenseYards = 
@@ -291,14 +297,34 @@ const calculateTeamRatios = (schedule, offense, defense) => {
         const aDefenseYards = 
             aDefense.PassingYards + aDefense.PassingYards
 
-        game.HomeOffensiveYards = hOffenseYards
-        game.AwayOffensiveYards = aOffenseYards
-        game.HomeDefensiveYards = hDefenseYards
-        game.AwayDefensiveYards = aDefenseYards
-        game.HomeDefensiveEffectiveness = aOffenseYards/hDefenseYards
-        game.AwayDefensiveEffectiveness = hOffenseYards/aDefenseYards
+        // game.HomeOffensiveYards = hOffenseYards
+        // game.AwayOffensiveYards = aOffenseYards
+        // game.HomeDefensiveYards = hDefenseYards
+        // game.AwayDefensiveYards = aDefenseYards
+        game.Ratios = {
+            HomeOffense: hDefenseYards/aOffenseYards,
+            HomeDefensive: aOffenseYards/hDefenseYards,
+            AwayOffense: aDefenseYards/hOffenseYards,
+            AwayDefensive: hOffenseYards/aDefenseYards
+        }
 
+        // Add the player information to the game
+        game.Home.Players = []
+        game.Away.Players = []
+
+        // filter to create an array containing only the players that play for the teams
+        // that are participating in the game
+        const gamePlayers = players.filter(player => (
+            player.TeamNickname === game.home || player.TeamNickname === game.away
+        ))
+
+        gamePlayers.map(player => {
+            player.TeamNickname === game.home? game.Home.Players.push(player) : game.Away.Players.push(player)
+        })
+
+        games.push(game)
     })
+    return games
 }
 
 const getPlayers =  () => getCSVData(playersFilename).then(data => parsePlayerData(data));
@@ -317,8 +343,8 @@ exports.getData = async () => {
     calculatePlayerRatios(players, offense, '')
 
     console.log('Calculating Team Ratios')
-    calculateTeamRatios(schedule, offense, defense)
+    const games = parseGameData(schedule, offense, defense, Object.values(players))
 
     console.log('Data Parsing Complete')
-    return {players, offense, defense, schedule, nicknames}
+    return {players, offense, defense, schedule, games, nicknames}
 }
