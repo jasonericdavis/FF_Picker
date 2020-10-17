@@ -5,10 +5,14 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "command": "npm run parse",
-            "name": "Run npm parse",
+            "type": "node",
             "request": "launch",
-            "type": "node-terminal"
+            "name": "Launch Parser",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/parser/index.ts",
+            "outFiles": ["${workspaceFolder}/parser/dist/*.js"]
         },
         {
             "type": "node",

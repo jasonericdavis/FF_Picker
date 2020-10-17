@@ -12,6 +12,7 @@
     "@types/node": "^14.11.2",
     "@types/react": "^16.9.50",
     "@types/react-dom": "^16.9.8",
+    "ts-node": "^9.0.0",
     "typescript": "^4.0.3"
   },
   "scripts": {
@@ -22,19 +23,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jasonericdavis/DK_Picker.git"
+    "url": "git+https://github.com/jasonericdavis/FF_Picker.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/jasonericdavis/DK_Picker/issues"
+    "url": "https://github.com/jasonericdavis/FF_Picker/issues"
   },
-  "homepage": "https://github.com/jasonericdavis/DK_Picker#readme",
-  "@comment browserslists": [
-    "I dont like having to adding this but for some reason",
-    "async doesnt work with parcel out of the box"
-  ],
-  "browserslist": [
-    "Chrome 78"
-  ]
+  "homepage": "https://github.com/jasonericdavis/F_Picker#readme"
 }

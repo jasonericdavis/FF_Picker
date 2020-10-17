@@ -1,10 +1,5 @@
-//import getCSVData from './getCSVData'
-// const fs = require('fs').promises;
-// const path = require('path')
-// const nicknames = require('./nicknames.json')
-import fs from 'fs'
-import path from 'path'
-import nicknames from './nicknames.json'
+const fs = require('fs').promises;
+const path = require('path')
 
 const playersFilename = 'pfW5Players.csv'
 const teamOffenseFilename = 'pfW5TeamOffense.csv'
@@ -41,8 +36,6 @@ interface PlayerRatios {
     Passing: number,
     Rushing: number
 }
-
-type PlayerKeys = keyof Player
 
 interface Defense {
     fumbles: number,
@@ -100,21 +93,6 @@ interface Game {
     away: Team,
     ratios: GameRatios
 }
-
-// const extractPlayerName = (cols, columns) => cols[columns['Player']].split('\\')[0]
-// const extractPlayerId = (cols, columns) => cols[columns['Player']].split('\\')[1]
-// const extractPositionColumns = (player:Player, positionColumns, cols, columns): Player => {
-//     for (const outputColumn in positionColumns) {
-//         /**
-//          * This is probably some premature optimization but what I am doing
-//          * here is defining the columns to look for in qbCols 
-//          */
-//         let lookupColumn = positionColumns[outputColumn]
-//         let lookupIndex = columns[lookupColumn]
-//         player[outputColumn] = Number(cols[lookupIndex])
-//     }0
-//     return player;
-// }
 
 const parsePlayerData = (data): {[key: string]: Player} => {
     let lines = data.split('\n')
@@ -194,10 +172,9 @@ const parseOffensiveData = (data):{[key:string]: Offense} => {
                 } 
                 columns[tempColName ] = colIndex
             })
-            // console.log(columns)
             return
         } else { 
-            let newOffense: Offense ={
+            let newOffense: Offense = {
                 team: cols[columns['Tm']],
                 passingCompletions: Number(cols[columns['Cmp']]),
                 passingAttempts: Number(cols[columns['Att']]),
@@ -208,7 +185,7 @@ const parseOffensiveData = (data):{[key:string]: Offense} => {
                 rushingYards: Number(cols[columns['Yds_2']]),
                 rushingTouchdowns: Number(cols[columns['TD_1']])
             }
-            offenses[ newOffense['Team']] = newOffense
+            offenses[ newOffense.team] = newOffense
         }
     })
     return offenses
@@ -271,7 +248,7 @@ const createTeams = (offenses:Array<Offense>, defenses:Array<Defense>):Array<Tea
     const offensesArray:Array<Offense> = Object.values(offenses)
     const teams:Array<Team> = []
     offensesArray.map((offense) => {
-        teams.push({name: offense.team, offense, defense: defenses[offense.team]})
+        teams.push({name: offense.team, offense, defense: defenses.filter(def => def.team == offense.team)[0]})
     })
     return teams
 }
@@ -294,9 +271,9 @@ const parseSchedule = data => {
     return games
 }
 
-const getCSVData =  async (filename, callback) => {
-    console.log(`Reading CSV file: ${filename}`)
-    const filepath = path.join(process.cwd(), 'data', filename)
+const getCSVData =  async (filename, callback) => { 
+    const filepath = path.join(process.cwd(), '../data', filename)
+    console.log(`Reading CSV file: ${filepath}`)
     return await fs.readFile(filepath, 'utf8', callback)
 }
 
@@ -322,56 +299,56 @@ const parseGameData = (schedule, offense, defense, players) => {
         const hDefense = defense[game.home]
         const aDefense = defense[game.away]
 
-        game.Home = {Offense: {...hOffense}, Defense: {...hDefense}}
-        game.Away = {Offense: {...aOffense}, Defense: {...aDefense}} 
+        game.home = {Offense: {...hOffense}, Defense: {...hDefense}}
+        game.away = {Offense: {...aOffense}, Defense: {...aDefense}} 
 
         // Add game ratios
         const hOffenseYards = 
-            hOffense.PassingYards + hOffense.RushingYards
+            hOffense.passingYards + hOffense.rushingYards
         const aOffenseYards = 
-            aOffense.PassingYards + hOffense.PassingYards
+            aOffense.passingYards + hOffense.rushingYards
         
         const hDefenseYards = 
-            hDefense.PassingYards + hDefense.RushingYards
+            hDefense.passingYards + hDefense.rushingYards
         const aDefenseYards = 
-            aDefense.PassingYards + aDefense.PassingYards
+            aDefense.passingYards + aDefense.rushingYards
 
         // game.HomeOffensiveYards = hOffenseYards
         // game.AwayOffensiveYards = aOffenseYards
         // game.HomeDefensiveYards = hDefenseYards
         // game.AwayDefensiveYards = aDefenseYards
-        game.Ratios = {
-            HomeOffense: hOffenseYards/aDefenseYards,
-            HomePassingOffense:  hOffense.PassingYards/aDefense.PassingYards,
-            HomeRushingYards: hOffense.RushingYards/aDefense.RushingYards,
-            HomeDefensive: aOffenseYards/hDefenseYards,
-            HomePassingDefense: aOffense.PassingYards/hDefense.PassingYards,
-            HomeRushingDefense: aOffense.RushingYards/hDefense.RushingYards,
-            AwayOffense: aOffenseYards/hDefenseYards,
-            AwayPassingOffense:  aOffense.PassingYards/hDefense.PassingYards,
-            AwayRushingYards: aOffense.RushingYards/hDefense.RushingYards,
-            AwayDefensive: hOffenseYards/aDefenseYards,
-            AwayPassingDefense: hOffense.PassingYards/aDefense.PassingYards,
-            AwayRushingDefense: hOffense.RushingYards/aDefense.RushingYards,
+        game.ratios = {
+            homeOffense: hOffenseYards/aDefenseYards,
+            homePassingOffense:  hOffense.passingYards/aDefense.passingYards,
+            homeRushingYards: hOffense.rushingYards/aDefense.rushingYards,
+            homeDefensive: aOffenseYards/hDefenseYards,
+            homePassingDefense: aOffense.passingYards/hDefense.passingYards,
+            homeRushingDefense: aOffense.rushingYards/hDefense.rushingYards,
+            awayOffense: aOffenseYards/hDefenseYards,
+            awayPassingOffense:  aOffense.passingYards/hDefense.passingYards,
+            awayRushingYards: aOffense.rushingYards/hDefense.rushingYards,
+            awayDefensive: hOffenseYards/aDefenseYards,
+            awayPassingDefense: hOffense.passingYards/aDefense.passingYards,
+            awayRushingDefense: hOffense.rushingYards/aDefense.rushingYards,
         }
 
         // Add the player information to the game
-        game.Home.Players = []
-        game.Away.Players = []
+        game.home.players = []
+        game.away.players = []
 
         // filter to create an array containing only the players that play for the teams
         // that are participating in the game
         const gamePlayers = players.filter(player => (
-            player.TeamNickname === game.home || player.TeamNickname === game.away
+            player.teamNickname === game.home || player.teamNickname === game.away
         ))
 
         gamePlayers.map(player => {
-            if(player.TeamNickname === game.home) {
-                player = calculatePlayerRatios(player, game.Home.Offense, game.Away.Defense)
-                game.Home.Players.push(player)
+            if(player.teamNickname === game.home) {
+                player = calculatePlayerRatios(player, game.home.offense, game.away.defense)
+                game.home.players.push(player)
             } else {
-                player = calculatePlayerRatios(player, game.Away.Offense, game.Home.Defense)
-                game.Away.Players.push(player)
+                player = calculatePlayerRatios(player, game.away.offense, game.home.defense)
+                game.away.players.push(player)
             }
         })
 
@@ -392,7 +369,7 @@ export const getData = async () => {
     const defense = await getDeffense().then(data => data)
     const schedule = await getSchedule().then(data => data)
 
-    console.log('Calculating Team Ratios')
+    console.log('Parsing Game Data')
     const games = parseGameData(schedule, offense, defense, Object.values(players))
 
     console.log('Data Parsing Complete')
