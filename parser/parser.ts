@@ -1,8 +1,8 @@
-const fs = require('fs');
-const path = require('path')
-const getParseData = require('./src/getPFParseData')
+import fs from 'fs'
+import path from'path'
+import {getData} from './getPFParseData'
 
-getParseData.getData()
+getData()
     .then(data => {
         const filename = path.join(__dirname, 'public/data.json')
         console.log(`writing to: ${filename}`)

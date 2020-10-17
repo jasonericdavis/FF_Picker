@@ -1,16 +1,15 @@
 import Column from './column'
 import Player from './player'
 
-const Game = ({game, players}) => {
+const Game = ({game}) => {
     return (
-        <Column name={`${game.home} vs ${game.away}`}>
-            <ul>
-                {players.map((player, index) => (
-                <li key={index} >
-                    <Player player={player} />
-                </li>
-                ))}   
-            </ul>
+        <Column name={''}>
+            <Column name={`${game.home}`}>
+
+            </Column>
+            <Column name={`${game.away}`}>
+                
+            </Column>
         </Column>
     )
 }

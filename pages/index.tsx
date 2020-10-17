@@ -1,5 +1,4 @@
 import {useState, useEffect} from 'react'
-import Column from '../src/components/column'
 import Game from '../src/components/game'
 
 const listSize = 20;
@@ -16,7 +15,7 @@ const PositionList = ({players}) => {
     .splice(0, listSize)
     .map((player, index) => (
     <ul>
-      <li>{player.Name}({parseInt(Number(player.Ratio)*100)}%)</li>
+      <li>{player.Name}({parseInt(player.Ratio)*100}%)</li>
     </ul>
   ))
 }
@@ -53,11 +52,15 @@ const HomePage = () => {
             </Column>
           </div> */}
           <div>
-            {data.schedule.map((game, index) => {
+            {/* {data.schedule.map((game, index) => {
               const players = Object.values(data.players)
                 .filter(qb => qb.TeamNickname === game.home || qb.TeamNickname === game.away)
               return <Game players={players.sort((a,b) => b.Ratio - a.Ratio)} game={game} />
-            })}
+            })} */}
+            {data.map((game, index) => {
+                return <Game game={game} />
+              }
+            )}
           </div>
         </div>
       }
