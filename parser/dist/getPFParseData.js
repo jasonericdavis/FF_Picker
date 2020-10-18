@@ -48,31 +48,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getData = void 0;
-//import getCSVData from './getCSVData'
 var fs = require('fs').promises;
 var path = require('path');
-// const nicknames = require('./nicknames.json')
-//import fs from 'fs'
-//import path from 'path'
-//import nicknames from './nicknames.json'
 var playersFilename = 'pfW5Players.csv';
 var teamOffenseFilename = 'pfW5TeamOffense.csv';
 var teamDefenseFilename = 'pfW5TeamDefense.csv';
 var scheduleFilename = 'pfSchedule.csv';
-// const extractPlayerName = (cols, columns) => cols[columns['Player']].split('\\')[0]
-// const extractPlayerId = (cols, columns) => cols[columns['Player']].split('\\')[1]
-// const extractPositionColumns = (player:Player, positionColumns, cols, columns): Player => {
-//     for (const outputColumn in positionColumns) {
-//         /**
-//          * This is probably some premature optimization but what I am doing
-//          * here is defining the columns to look for in qbCols 
-//          */
-//         let lookupColumn = positionColumns[outputColumn]
-//         let lookupIndex = columns[lookupColumn]
-//         player[outputColumn] = Number(cols[lookupIndex])
-//     }0
-//     return player;
-// }
 var parsePlayerData = function (data) {
     var lines = data.split('\n');
     var columns = {};
@@ -147,7 +128,6 @@ var parseOffensiveData = function (data) {
                 }
                 columns[tempColName] = colIndex;
             });
-            // console.log(columns)
             return;
         }
         else {
@@ -162,7 +142,7 @@ var parseOffensiveData = function (data) {
                 rushingYards: Number(cols[columns['Yds_2']]),
                 rushingTouchdowns: Number(cols[columns['TD_1']])
             };
-            offenses[newOffense['Team']] = newOffense;
+            offenses[newOffense.team] = newOffense;
         }
     });
     return offenses;
@@ -222,7 +202,7 @@ var createTeams = function (offenses, defenses) {
     var offensesArray = Object.values(offenses);
     var teams = [];
     offensesArray.map(function (offense) {
-        teams.push({ name: offense.team, offense: offense, defense: defenses[offense.team] });
+        teams.push({ name: offense.team, offense: offense, defense: defenses.filter(function (def) { return def.team == offense.team; })[0] });
     });
     return teams;
 };
@@ -274,45 +254,45 @@ var parseGameData = function (schedule, offense, defense, players) {
         var aOffense = offense[game.away];
         var hDefense = defense[game.home];
         var aDefense = defense[game.away];
-        game.Home = { Offense: __assign({}, hOffense), Defense: __assign({}, hDefense) };
-        game.Away = { Offense: __assign({}, aOffense), Defense: __assign({}, aDefense) };
+        game.home = { Offense: __assign({}, hOffense), Defense: __assign({}, hDefense) };
+        game.away = { Offense: __assign({}, aOffense), Defense: __assign({}, aDefense) };
         // Add game ratios
-        var hOffenseYards = hOffense.PassingYards + hOffense.RushingYards;
-        var aOffenseYards = aOffense.PassingYards + hOffense.PassingYards;
-        var hDefenseYards = hDefense.PassingYards + hDefense.RushingYards;
-        var aDefenseYards = aDefense.PassingYards + aDefense.PassingYards;
+        var hOffenseYards = hOffense.passingYards + hOffense.rushingYards;
+        var aOffenseYards = aOffense.passingYards + hOffense.rushingYards;
+        var hDefenseYards = hDefense.passingYards + hDefense.rushingYards;
+        var aDefenseYards = aDefense.passingYards + aDefense.rushingYards;
         // game.HomeOffensiveYards = hOffenseYards
         // game.AwayOffensiveYards = aOffenseYards
         // game.HomeDefensiveYards = hDefenseYards
         // game.AwayDefensiveYards = aDefenseYards
-        game.Ratios = {
-            HomeOffense: hOffenseYards / aDefenseYards,
-            HomePassingOffense: hOffense.PassingYards / aDefense.PassingYards,
-            HomeRushingYards: hOffense.RushingYards / aDefense.RushingYards,
-            HomeDefensive: aOffenseYards / hDefenseYards,
-            HomePassingDefense: aOffense.PassingYards / hDefense.PassingYards,
-            HomeRushingDefense: aOffense.RushingYards / hDefense.RushingYards,
-            AwayOffense: aOffenseYards / hDefenseYards,
-            AwayPassingOffense: aOffense.PassingYards / hDefense.PassingYards,
-            AwayRushingYards: aOffense.RushingYards / hDefense.RushingYards,
-            AwayDefensive: hOffenseYards / aDefenseYards,
-            AwayPassingDefense: hOffense.PassingYards / aDefense.PassingYards,
-            AwayRushingDefense: hOffense.RushingYards / aDefense.RushingYards,
+        game.ratios = {
+            homeOffense: hOffenseYards / aDefenseYards,
+            homePassingOffense: hOffense.passingYards / aDefense.passingYards,
+            homeRushingYards: hOffense.rushingYards / aDefense.rushingYards,
+            homeDefensive: aOffenseYards / hDefenseYards,
+            homePassingDefense: aOffense.passingYards / hDefense.passingYards,
+            homeRushingDefense: aOffense.rushingYards / hDefense.rushingYards,
+            awayOffense: aOffenseYards / hDefenseYards,
+            awayPassingOffense: aOffense.passingYards / hDefense.passingYards,
+            awayRushingYards: aOffense.rushingYards / hDefense.rushingYards,
+            awayDefensive: hOffenseYards / aDefenseYards,
+            awayPassingDefense: hOffense.passingYards / aDefense.passingYards,
+            awayRushingDefense: hOffense.rushingYards / aDefense.rushingYards,
         };
         // Add the player information to the game
-        game.Home.Players = [];
-        game.Away.Players = [];
+        game.home.players = [];
+        game.away.players = [];
         // filter to create an array containing only the players that play for the teams
         // that are participating in the game
-        var gamePlayers = players.filter(function (player) { return (player.TeamNickname === game.home || player.TeamNickname === game.away); });
+        var gamePlayers = players.filter(function (player) { return (player.teamNickname === game.home || player.teamNickname === game.away); });
         gamePlayers.map(function (player) {
-            if (player.TeamNickname === game.home) {
-                player = calculatePlayerRatios(player, game.Home.Offense, game.Away.Defense);
-                game.Home.Players.push(player);
+            if (player.teamNickname === game.home) {
+                player = calculatePlayerRatios(player, game.home.offense, game.away.defense);
+                game.home.players.push(player);
             }
             else {
-                player = calculatePlayerRatios(player, game.Away.Offense, game.Home.Defense);
-                game.Away.Players.push(player);
+                player = calculatePlayerRatios(player, game.away.offense, game.home.defense);
+                game.away.players.push(player);
             }
         });
         games.push(game);
@@ -341,7 +321,7 @@ exports.getData = function () { return __awaiter(void 0, void 0, void 0, functio
                 return [4 /*yield*/, getSchedule().then(function (data) { return data; })];
             case 4:
                 schedule = _a.sent();
-                console.log('Calculating Team Ratios');
+                console.log('Parsing Game Data');
                 games = parseGameData(schedule, offense, defense, Object.values(players));
                 console.log('Data Parsing Complete');
                 return [2 /*return*/, { players: Object.values(players), teams: createTeams(Object.values(offense), Object.values(defense)), games: games }];

@@ -2,6 +2,9 @@ const fs = require('fs')
 const path = require('path')
 import pfData = require('./getPFParseData')
 
+let args = process.argv
+console.log(args)
+
 pfData.getData()
     .then(({players, teams, games}) => {
         // const filename = path.join(__dirname, '../public/data.json')
