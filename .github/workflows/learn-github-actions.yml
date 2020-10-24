@@ -1,6 +1,17 @@
 name: learn-github-actions
 on: [push]
 jobs:
+  test-node-job:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - run: npm install
+      - run: npx tsc -p ./parser -b ./parser
+      
   check-bats-version:
     runs-on: ubuntu-latest
     steps:
