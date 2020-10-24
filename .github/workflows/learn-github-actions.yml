@@ -10,8 +10,8 @@ jobs:
         with:
           node-version: '12.x'
       - run: npm install
-      - run: npx tsc -p ./parser -b ./parser
-      
+      - run: npx tsc -b ./parser
+
   check-bats-version:
     runs-on: ubuntu-latest
     steps:
