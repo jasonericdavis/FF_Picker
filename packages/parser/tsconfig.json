@@ -3,13 +3,14 @@
       "target": "es5",
       "module": "commonjs",
       "lib": ["es6"],
-      "outDir": "./dist",
+      "outDir": "dist",
       "esModuleInterop": true,
       "moduleResolution": "node",
       "resolveJsonModule": true,
     },
     "include": [
       "*.ts"
-    ]
+    ],
+    "references": [{"path": "../../lib"}]
   }
   

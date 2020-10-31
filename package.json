@@ -1,34 +1,23 @@
 {
   "name": "ff_picker",
   "version": "1.0.0",
-  "description": "Fantasy Footbal picker",
-  "dependencies": {
-    "next": "^9.5.3",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "tailwindcss": "^1.8.10"
-  },
-  "devDependencies": {
-    "@types/node": "^14.11.2",
-    "@types/react": "^16.9.50",
-    "@types/react-dom": "^16.9.8",
-    "ts-node": "^9.0.0",
-    "typescript": "^4.0.3"
-  },
+  "description": "Fantasy Football Picker",
+  "private": true,
+  "workspaces": ["packages/*"],
+  "dependencies": {},
+  "devDependencies": {},
   "scripts": {
     "dev": "next",
     "build": "next build",
     "start": "next start",
     "parse": "node parser.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/jasonericdavis/FF_Picker.git"
-  },
-  "author": "",
-  "license": "ISC",
+  "repository": "git+https://github.com/jasonericdavis/FF_Picker.git",
+  "author": "Jason Davis <jason@jasonericdavis.dev>",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/jasonericdavis/FF_Picker/issues"
   },
-  "homepage": "https://github.com/jasonericdavis/F_Picker#readme"
+  "homepage": "https://github.com/jasonericdavis/F_Picker#readme",
+  "main": "index.js"
 }
