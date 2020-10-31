@@ -1,13 +1,12 @@
 import {useState, useEffect} from 'react'
-import Game from '../src/components/game'
 
 const getData = async () =>  {
-    return fetch('/games.json').then(response => response.json())
+    return fetch('/teams.json').then(response => response.json())
 }
 
 const Loading = () => <div>Loading Data</div>
 
-const GamePage = () => {
+const TeamsPage = () => {
     const [data, setData] = useState(null)
   
     useEffect(() => {
@@ -24,7 +23,11 @@ const GamePage = () => {
         {(!data)? <Loading /> 
         :<div className="p-8">
             <div>
-                {data.map((game, index) => <Game key={index} game={game} />)}
+                {data.sort((x,y) => x.offense.passingRank - y.offense.passingRank).map((team) => 
+                    <ul>
+                        <li>{team.name} | {team.offense.passingRank} - {team.offense.passingYards}</li>
+                    </ul>                        
+                )}
             </div>
           </div>
         }
@@ -32,4 +35,4 @@ const GamePage = () => {
     )
   }
     
-export default GamePage
+export default TeamsPage
