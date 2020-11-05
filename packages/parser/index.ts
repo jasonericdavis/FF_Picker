@@ -10,7 +10,6 @@ console.log(args)
 
 getData()
     .then(({players, teams, games}) => {
-        // const filename = path.join(__dirname, '../public/data.json')
         console.log(`creating data files`)
         fs.writeFile(path.join(__dirname, '../public/players.json'), JSON.stringify(players), (error) => {
             if(error) console.log(`there was an error writing to file: ${error}`)
