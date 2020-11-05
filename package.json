@@ -6,18 +6,12 @@
   "workspaces": ["packages/*"],
   "dependencies": {},
   "devDependencies": {},
-  "scripts": {
-    "dev": "next",
-    "build": "next build",
-    "start": "next start",
-    "parse": "node parser.js"
-  },
+  "scripts": {},
   "repository": "git+https://github.com/jasonericdavis/FF_Picker.git",
   "author": "Jason Davis <jason@jasonericdavis.dev>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/jasonericdavis/FF_Picker/issues"
   },
-  "homepage": "https://github.com/jasonericdavis/F_Picker#readme",
-  "main": "index.js"
+  "homepage": "https://github.com/jasonericdavis/F_Picker#readme"
 }

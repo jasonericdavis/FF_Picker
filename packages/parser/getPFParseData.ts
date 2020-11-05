@@ -13,7 +13,7 @@ import {
     Game,
     ScheduledGame,
     PlayerRatios
-} from '../../lib'
+} from 'shared-lib'
 
 const playersFilename = 'pfW5Players.csv'
 const teamOffenseFilename = 'pfW5TeamOffense.csv'
@@ -206,7 +206,7 @@ const getScheduledGames = (data, week):Array<ScheduledGame> => {
 }
 
 const getCSVData =  async (filename, callback) => { 
-    const filepath = path.join(process.cwd(), '../data', filename)
+    const filepath = path.join(process.cwd(), 'data', filename)
     console.log(`Reading CSV file: ${filepath}`)
     return await fs.readFile(filepath, 'utf8', callback)
 }

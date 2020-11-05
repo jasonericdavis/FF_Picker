@@ -19,7 +19,7 @@ export interface Player {
     targets: number,
     team: string,
     teamAbbr: string,
-    ratios?: PlayerRatios,
+    ratios?: PlayerRatios
 }
 
 export interface PlayerRatios {

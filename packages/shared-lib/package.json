@@ -1,5 +1,5 @@
 {
-  "name": "shared",
+  "name": "shared-lib",
   "version": "1.0.0",
   "description": "shared package for fanatasy football picker",
   "main": "dist/index.js",
