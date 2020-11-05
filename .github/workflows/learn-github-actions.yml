@@ -9,6 +9,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '12.x'
+      - run: cd packages/parser
       - run: npm install
       - run: npx tsc --build ./parser
 
