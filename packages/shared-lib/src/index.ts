@@ -1,0 +1,95 @@
+export interface Player {
+    attempts: number,
+    completions: number,
+    fantasyPoints: number,
+    id: string,
+    int: number,
+    name: string,
+    passingAttempts: number,
+    passingTouchdowns: number,
+    passingYards: number,
+    position: string,
+    receivingAverage: number,
+    receivingTouchdowns: number,
+    receivingYards: number,
+    receptions: number,
+    rushingAverage: number,
+    rushingTouchdowns: number,
+    rushingYards: number,
+    targets: number,
+    team: string,
+    teamAbbr: string,
+    ratios?: PlayerRatios
+}
+
+export interface PlayerRatios {
+    defense: number,
+    offensive: number,
+    passing: number,
+    rushing: number,
+    receiving: number
+}
+
+export interface Defense {
+    fumbles: number,
+    interceptions: number,
+    passingAttempts: number,
+    passingTouchdowns: number,
+    passingYards: number,
+    pointsAllowed: number,
+    rushingAttempts: number,
+    rushingTouchdowns: number,
+    rushingYards: number,
+    takeAways: number,
+    team: string,
+    totalYards: number,
+}
+
+export interface Offense {
+    interceptions: number,
+    passingAttempts: number,
+    passingCompletions: number,
+    passingTouchdowns: number,
+    passingYards: number,
+    rushingAttempts: number,
+    rushingTouchdowns: number,
+    rushingYards: number,
+    team: string
+}
+
+export interface Team {
+    name: string,
+    offense: Offense,
+    defense: Defense,
+    players?: Array<Player>
+}
+
+export interface GameRatios {
+    awayDefensive: number,
+    awayOffense: number,
+    awayPassingDefense: number,
+    awayPassingOffense: number,
+    awayRushingDefense: number,
+    awayRushingYards: number,
+    homeDefensive: number,
+    homeOffense: number,
+    homePassingDefense: number,
+    homePassingOffense: number,
+    homeRushingDefense: number,
+    homeRushingYards: number
+}
+
+export interface ScheduledGame {
+    home: string,
+    away: string,
+    date: string,
+    kickoff: string
+}
+
+export interface Game {
+    home: Team,
+    away: Team,
+    date: string,
+    kickoff: string,
+    ratios: GameRatios
+}

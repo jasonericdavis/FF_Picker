@@ -1,110 +1,24 @@
+///<referrence path='lib/index.d.ts' />
 const fs = require('fs').promises;
-const path = require('path')
-const nicknames = require('./nicknames.json')
+// const path = require('path')
+// const nicknames = require('./nicknames.json')
+//import {promises as fs} from 'fs'
+import path from 'path'
+import nicknames from './nicknames.json'
+import {
+    Player,
+    Offense,
+    Defense,
+    Team,
+    Game,
+    ScheduledGame,
+    PlayerRatios
+} from 'shared-lib'
 
 const playersFilename = 'pfW7Players.csv'
 const teamOffenseFilename = 'pfW7TeamOffense.csv'
 const teamDefenseFilename = 'pfW7TeamDefense.csv'
 const scheduleFilename = 'pfSchedule.csv'
-
-
-interface Player {
-    attempts: number,
-    completions: number,
-    fantasyPoints: number,
-    id: string,
-    int: number,
-    name: string,
-    passingAttempts: number,
-    passingTouchdowns: number,
-    passingYards: number,
-    position: string,
-    receivingAverage: number,
-    receivingTouchdowns: number,
-    receivingYards: number,
-    receptions: number,
-    rushingAverage: number,
-    rushingTouchdowns: number,
-    rushingYards: number,
-    targets: number,
-    team: string,
-    teamAbbr: string,
-    ratios?: PlayerRatios,
-}
-
-interface PlayerRatios {
-    defense: number,
-    offensive: number,
-    passing: number,
-    rushing: number,
-    receiving: number
-}
-
-interface Defense {
-    fumbles: number,
-    interceptions: number,
-    passingAttempts: number,
-    passingTouchdowns: number,
-    passingYards: number,
-    pointsAllowed: number,
-    rushingAttempts: number,
-    rushingTouchdowns: number,
-    rushingYards: number,
-    takeAways: number,
-    team: string,
-    totalYards: number,
-}
-
-interface Offense {
-    interceptions: number,
-    passingAttempts: number,
-    passingCompletions: number,
-    passingTouchdowns: number,
-    passingYards: number,
-    rushingAttempts: number,
-    rushingTouchdowns: number,
-    rushingYards: number,
-    passingRank: number,
-    rushingRank: number,
-    team: string
-}
-
-interface Team {
-    name: string,
-    offense: Offense,
-    defense: Defense,
-    players?: Array<Player>
-}
-
-interface GameRatios {
-    awayDefensive: number,
-    awayOffense: number,
-    awayPassingDefense: number,
-    awayPassingOffense: number,
-    awayRushingDefense: number,
-    awayRushingOffense: number,
-    homeDefensive: number,
-    homeOffense: number,
-    homePassingDefense: number,
-    homePassingOffense: number,
-    homeRushingDefense: number,
-    homeRushingOffense: number
-}
-
-interface ScheduledGame {
-    home: string,
-    away: string,
-    date: string,
-    kickoff: string
-}
-
-interface Game {
-    home: Team,
-    away: Team,
-    date: string,
-    kickoff: string,
-    ratios: GameRatios
-}
 
 const parsePlayerData = (data): {[key: string]: Player} => {
     let lines = data.split('\n')
@@ -301,7 +215,7 @@ const getScheduledGames = (data, week):Array<ScheduledGame> => {
 }
 
 const getCSVData =  async (filename, callback) => { 
-    const filepath = path.join(process.cwd(), '../data', filename)
+    const filepath = path.join(process.cwd(), 'data', filename)
     console.log(`Reading CSV file: ${filepath}`)
     return await fs.readFile(filepath, 'utf8', callback)
 }

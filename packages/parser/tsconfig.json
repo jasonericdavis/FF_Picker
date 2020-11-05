@@ -3,7 +3,7 @@
       "target": "es5",
       "module": "commonjs",
       "lib": ["es6"],
-      "outDir": "../dist/parser",
+      "outDir": "dist",
       "esModuleInterop": true,
       "moduleResolution": "node",
       "resolveJsonModule": true,
