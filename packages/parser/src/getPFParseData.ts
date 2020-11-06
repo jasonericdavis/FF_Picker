@@ -180,7 +180,7 @@ const parseDefensiveData = (data):{[key:string]: Defense} => {
  * @param {Dictionary[Deffense]} defense The offenses to be combined
  * @returns {Team[]} An array with the Team objects
  */
-const createTeams = (offenses:Array<Offense>, defenses:Array<Defense>):Array<Team> => {
+export const createTeams = (offenses:Array<Offense>, defenses:Array<Defense>):Array<Team> => {
     const offensesArray:Array<Offense> = Object.values(offenses)
     const teams:Array<Team> = []
     offensesArray.map((offense) => {
