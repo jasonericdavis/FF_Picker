@@ -54,7 +54,9 @@ export interface Offense {
     rushingAttempts: number,
     rushingTouchdowns: number,
     rushingYards: number,
-    team: string
+    team: string,
+    passingRank: number,
+    rushingRank: number
 }
 
 export interface Team {
@@ -70,13 +72,13 @@ export interface GameRatios {
     awayPassingDefense: number,
     awayPassingOffense: number,
     awayRushingDefense: number,
-    awayRushingYards: number,
+    awayRushingOffense: number,
     homeDefensive: number,
     homeOffense: number,
     homePassingDefense: number,
     homePassingOffense: number,
     homeRushingDefense: number,
-    homeRushingYards: number
+    homeRushingOffense: number
 }
 
 export interface ScheduledGame {

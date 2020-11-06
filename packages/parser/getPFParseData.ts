@@ -11,9 +11,10 @@ import {
     Defense,
     Team,
     Game,
+    GameRatios,
     ScheduledGame,
     PlayerRatios
-} from 'shared-lib'
+} from 'shared-lib/src/index'
 
 const playersFilename = 'pfW7Players.csv'
 const teamOffenseFilename = 'pfW7TeamOffense.csv'
