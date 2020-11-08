@@ -1,4 +1,4 @@
- {
+ export default {
     "SFO":"San Francisco 49ers",
     "BUF":"Buffalo Bills" ,
     "PIT":"Pittsburgh Steelers",

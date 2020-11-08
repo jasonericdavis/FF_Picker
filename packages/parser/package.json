@@ -15,6 +15,7 @@
   },
   "scripts": {
     "test": "jest",
+    "compile": "tsc",
     "start": "node dist/index.js"
   },
   "repository": {
