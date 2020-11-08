@@ -11,7 +11,7 @@ jobs:
           node-version: '12.x'
       - run: yarn install
       - run: yarn workspace parser tsc --build .
-      - run: yarn workspace parser test
+      - run: yarn test
 
   check-bats-version:
     runs-on: ubuntu-latest
