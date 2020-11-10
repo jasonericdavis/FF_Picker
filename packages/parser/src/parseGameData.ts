@@ -4,39 +4,40 @@ import {
     Team,
     Game,
     GameRatios,
-    PlayerRatios
+    PlayerRatios,
+    ScheduledGame
 } from 'shared-lib/src/index'
 
 
-const calculateGameRatios = (homeTeam:string, awayTeam:string, offense:Array<Offense>, defense:Array<Defense>):GameRatios => {
-    const hOffense = offense[homeTeam]
-    const aOffense = offense[awayTeam]
+const calculateGameRatios = (homeTeam:string, awayTeam:string, offenses:Array<Offense>, defense:Array<Defense>):GameRatios => {
+    const hOffense = offenses[homeTeam]
+    const aOffense = offenses[awayTeam]
 
     const hDefense = defense[homeTeam]
     const aDefense = defense[awayTeam]
 
     // Add game ratios
-    const hOffenseYards = 
-        hOffense.passingYards + hOffense.rushingYards
-    const aOffenseYards = 
-        aOffense.passingYards + hOffense.rushingYards
+    // const hOffenseYards = 
+    //     hOffense.passingYards + hOffense.rushingYards
+    // const aOffenseYards = 
+    //     aOffense.passingYards + hOffense.rushingYards
     
-    const hDefenseYards = 
-        hDefense.passingYards + hDefense.rushingYards
-    const aDefenseYards = 
-        aDefense.passingYards + aDefense.rushingYards
+    // const hDefenseYards = 
+    //     hDefense.passingYards + hDefense.rushingYards
+    // const aDefenseYards = 
+    //     aDefense.passingYards + aDefense.rushingYards
 
     return {
-        homeOffense: (0.5 * hOffenseYards) + (0.5 * aDefenseYards),
+        homeOffense: (0.5 * hOffense.totalYards) + (0.5 * aDefense.totalYards),
         homePassingOffense:  (0.75 * hOffense.passingYards) + (0.25 * aDefense.passingYards),
         homeRushingOffense: hOffense.rushingYards/aDefense.rushingYards,
-        homeDefensive: aOffenseYards/hDefenseYards,
+        homeDefensive: aOffense.totalYards/hDefense.totalYards,
         homePassingDefense: aOffense.passingYards/hDefense.passingYards,
         homeRushingDefense: aOffense.rushingYards/hDefense.rushingYards,
-        awayOffense: aOffenseYards/hDefenseYards,
+        awayOffense: aOffense.totalYards/hDefense.totalYards,
         awayPassingOffense:  aOffense.passingYards/hDefense.passingYards,
         awayRushingOffense: aOffense.rushingYards/hDefense.rushingYards,
-        awayDefensive: hOffenseYards/aDefenseYards,
+        awayDefensive: hOffense.totalYards/aDefense.totalYards,
         awayPassingDefense: hOffense.passingYards/aDefense.passingYards,
         awayRushingDefense: hOffense.rushingYards/aDefense.rushingYards,
     }
@@ -56,7 +57,7 @@ const calculatePlayerRatios = (player, offense, defense) => {
     return {...player, ratio}
 }
 
-export const parseGameData = (scheduledGames, offenses, defenses, players) => {
+export const parseGameData = (scheduledGames:Array<ScheduledGame>, offenses, defenses, players) => {
     let games:Array<Game> = []
     scheduledGames.map((scheduledGame) => {
         const ratios = calculateGameRatios(scheduledGame.home, scheduledGame.away, offenses, defenses)

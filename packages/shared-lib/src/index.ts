@@ -43,6 +43,7 @@ export interface Defense {
     takeAways: number,
     team: string,
     totalYards: number,
+    defensiveRank: number,
     passingRank: number,
     rushingRank: number
 }
@@ -56,7 +57,9 @@ export interface Offense {
     rushingAttempts: number,
     rushingTouchdowns: number,
     rushingYards: number,
+    totalYards: number,
     team: string,
+    offensiveRank: number,
     passingRank: number,
     rushingRank: number
 }

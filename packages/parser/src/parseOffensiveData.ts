@@ -6,6 +6,8 @@ export const calculateTeamRanks = (offenses:{[key:string]:Offense}) => {
             x => x.passingYards > offense.passingYards).length + 1
         offense.rushingRank = Object.values(offenses).filter(
             x => x.rushingYards > offense.rushingYards).length + 1
+        offense.offensiveRank = Object.values(offenses).filter(
+            x => x.totalYards > offense.totalYards).length + 1
     })
     return offenses
 }
@@ -38,6 +40,7 @@ export const parseOffensiveData = (data):{[key:string]: Offense} => {
         } else { 
             let newOffense: Offense = {
                 team: cols[columns['Tm']],
+                totalYards: Number(cols[columns['Yds']]),
                 passingCompletions: Number(cols[columns['Cmp']]),
                 passingAttempts: Number(cols[columns['Att']]),
                 passingYards: Number(cols[columns['Yds_1']]),
@@ -46,6 +49,7 @@ export const parseOffensiveData = (data):{[key:string]: Offense} => {
                 rushingAttempts: Number(cols[columns['Att_1']]),
                 rushingYards: Number(cols[columns['Yds_2']]),
                 rushingTouchdowns: Number(cols[columns['TD_1']]),
+                offensiveRank: lines.length,
                 passingRank: lines.length,
                 rushingRank: lines.length
             }

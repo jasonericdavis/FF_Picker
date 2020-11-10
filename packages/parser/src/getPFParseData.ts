@@ -1,20 +1,16 @@
-const fs = require('fs').promises;
 import path from 'path'
 import parseGameData from './parseGameData'
 import parsePlayerData from './parsePlayerData'
 import parseOffensiveData from './parseOffensiveData'
 import parseDefensiveData from './parseDefensiveData'
+import parseScheduledGamesData from './parseScheduledGamesData'
+import {getCSVData} from './util'
 
 import {
-    Player,
     Offense,
     Defense,
-    Team,
-    Game,
-    GameRatios,
-    ScheduledGame,
-    PlayerRatios
-} from 'shared-lib/src/index'
+    Team
+} from 'shared-lib'
 
 /**
  * This method combines the offenses and defenses into an array
@@ -32,41 +28,10 @@ export const createTeams = (offenses:Array<Offense>, defenses:Array<Defense>):Ar
     return teams
 }
 
-/**
- * This method parses the schedule from the csv data 
- * and returns a subset of the schedule for a particular week
- * @param {string} data The csv data of the schedule
- * @param {string} week The week number of games to retreive
- * @return {ScheduledGame[]} An array of ScheduledGame objects
- */
-const getScheduledGames = (data, week):Array<ScheduledGame> => {
-    const lines = data.split('\n')
-    const scheduledGames: Array<ScheduledGame> = [];
-    lines.map((line) => {
-        const cols = line.split(',')
-        
-        // If its not the week we are looking for skip
-        if(cols[0] != week) return
-        
-        scheduledGames.push({
-            home: cols[6],
-            away: cols[4],
-            date: cols[2],
-            kickoff: cols[3]
-        })   
-    })
-    return scheduledGames
-}
-
-const getCSVData =  async (filename, callback) => { 
-    console.log(`Reading CSV file: ${filename}`)
-    return await fs.readFile(filename, 'utf8', callback)
-}
-
 const getPlayers  = (folder) => getCSVData(path.join(folder, 'players.csv'), (err) => console.log(err)).then((data) => parsePlayerData(data));
 const getOffense  = (folder) => getCSVData(path.join(folder, 'offense.csv'), (err) => console.log(err)).then(data => parseOffensiveData(data));
 const getDeffense = (folder) => getCSVData(path.join(folder, 'defense.csv'), (err) => console.log(err)).then(data => parseDefensiveData(data));
-const getSchedule = (scheduleFilename) => getCSVData(scheduleFilename, (err) => console.log(err)).then(data => getScheduledGames(data, '8'));
+const getSchedule = (scheduleFilename) => getCSVData(scheduleFilename, (err) => console.log(err)).then(data => parseScheduledGamesData(data, '8'));
 
 export const getData = async (folder, scheduleFilename) => {
     console.log('Parsing Data')
