@@ -7,7 +7,7 @@ console.log(args)
 const folder = path.join(process.cwd(),'data', '2020-8')
 
 getData(folder, path.join(process.cwd(),'data', 'pfSchedule.csv'))
-    .then(({players, teams, games}) => {
+    .then(({players, teams, games, units}) => {
         console.log(`creating data files`)
         fs.writeFile(path.join(__dirname, '../public/players.json'), JSON.stringify(players), (error) => {
             if(error) console.log(`there was an error writing to file: ${error}`)
@@ -20,6 +20,8 @@ getData(folder, path.join(process.cwd(),'data', 'pfSchedule.csv'))
         fs.writeFile(path.join(__dirname, '../public/games.json'), JSON.stringify(games), (error) => {
             if(error) console.log(`there was an error writing to file: ${error}`)
         })
+
+        console.log(units)
     })
     .catch(error => 
         console.log(`There was an error: ${error}`)

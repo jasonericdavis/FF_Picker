@@ -6,6 +6,8 @@ export const calculateTeamRanks = (defenses:{[key:string]:Defense}) => {
             x => x.passingYards > defense.passingYards).length + 1
         defense.rushingRank = Object.values(defenses).filter(
             x => x.rushingYards > defense.rushingYards).length + 1
+        defense.defensiveRank = Object.values(defenses).filter(
+            x => x.totalYards > defense.totalYards).length + 1
     })
     return defenses
 }
@@ -49,6 +51,7 @@ export const parseDefensiveData = (data):{[key:string]: Defense} => {
                 rushingAttempts: Number(cols[columns['Att_1']]),
                 rushingYards: Number(cols[columns['Yds_2']]),
                 rushingTouchdowns: Number(cols[columns['TD_1']]),
+                defensiveRank: lines.length,
                 passingRank: lines.length,
                 rushingRank: lines.length
             }

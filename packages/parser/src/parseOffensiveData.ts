@@ -1,4 +1,4 @@
-import {Offense} from 'shared-lib/dist/index'
+import {Offense} from 'shared-lib'
 
 export const calculateTeamRanks = (offenses:{[key:string]:Offense}) => {
     Object.values(offenses).map( offense => {
@@ -12,11 +12,11 @@ export const calculateTeamRanks = (offenses:{[key:string]:Offense}) => {
     return offenses
 }
 
-
 export const parseOffensiveData = (data):{[key:string]: Offense} => {
     let lines = data.split('\n')
     let columns = {};
     let offenses:{[key:string]: Offense} = {};
+    
 
     lines.map((line, index) => {
         // the first line contains the keys
@@ -57,9 +57,9 @@ export const parseOffensiveData = (data):{[key:string]: Offense} => {
         }
     })
 
+
     offenses = calculateTeamRanks(offenses)
     return offenses
 }
-
 
 export default parseOffensiveData

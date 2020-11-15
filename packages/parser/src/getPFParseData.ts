@@ -4,6 +4,7 @@ import parsePlayerData from './parsePlayerData'
 import parseOffensiveData from './parseOffensiveData'
 import parseDefensiveData from './parseDefensiveData'
 import parseScheduledGamesData from './parseScheduledGamesData'
+import getUnits from './getUnits'
 import {getCSVData} from './util'
 
 import {
@@ -36,13 +37,16 @@ const getSchedule = (scheduleFilename) => getCSVData(scheduleFilename, (err) => 
 export const getData = async (folder, scheduleFilename) => {
     console.log('Parsing Data')
     const players = await getPlayers(folder).then(data => data)
-    const offense = await getOffense(folder).then(data => data)
-    const defense = await getDeffense(folder).then(data => data)
+    const offenses = await getOffense(folder).then(data => data)
+    const defenses = await getDeffense(folder).then(data => data)
     const scheduledGames = await getSchedule(scheduleFilename).then(data => data)
+    
+    const units = getUnits(Object.values(offenses), Object.values(defenses), Object.values(players))
+    console.log(JSON.stringify(units))
 
     console.log('Parsing Game Data')
-    const games = parseGameData(scheduledGames, offense, defense, Object.values(players))
+    const games = parseGameData(scheduledGames, offenses, defenses, Object.values(players))
 
     console.log('Data Parsing Complete')
-    return {players: Object.values(players), teams: createTeams(Object.values(offense), Object.values(defense)), games}
+    return {players: Object.values(players), teams: createTeams(Object.values(offenses), Object.values(defenses)), games, units}
 }
