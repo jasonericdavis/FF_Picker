@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react'
-import Game from '../src/components/game'
+import Game from '../components/game'
 
 const getData = async () =>  {
     return fetch('/api/data').then(response => response.json())

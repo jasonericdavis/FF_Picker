@@ -1,4 +1,4 @@
-import parser from '../../src/parser'
+import parser from '../../lib/parser'
 
 export default async (req, res) => {
     const data = await parser()

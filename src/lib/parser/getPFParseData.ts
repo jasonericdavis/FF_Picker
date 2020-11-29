@@ -6,7 +6,7 @@ import parseDefensiveData from './parseDefensiveData'
 import parseScheduledGamesData from './parseScheduledGamesData'
 import getUnits from './getUnits'
 import {getCSVData} from './util'
-import {Offense,Defense,Team, Player} from '../types'
+import {Offense,Defense,Team, Player} from '../../types'
 
 /**
  * This method combines the offenses and defenses into an array

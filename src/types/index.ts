@@ -112,7 +112,7 @@ export interface PlayerSimulation {
     rushingYardsDiff: number,
     rushingPercentage: number,
     receivingYards: number,
-    receivingDiff: number,
+    receivingYardsDiff: number,
     receivingPercentage: number
 }
 

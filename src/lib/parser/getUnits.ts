@@ -1,4 +1,4 @@
-import { Offense, Defense, Player } from '../types'
+import { Offense, Defense, Player } from '../../types'
 
 const getOffensiveUnits = (offenses:Array<Offense>) => {
     let totalMin = null, passingMin = null, rushingMin = null

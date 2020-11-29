@@ -149,7 +149,7 @@ Week,Day,Date,Time,Winner/tie,,Loser/tie,,PtsW,PtsL,YdsW,TOW,YdsL,TOL
 11,Thu,November 19,8:20PM,Seattle Seahawks,,Arizona Cardinals,boxscore,28,21,347,0,314,0
 11,Sun,November 22,1:00PM,Washington Football Team,,Cincinnati Bengals,boxscore,20,9,325,1,272,2
 11,Sun,November 22,1:00PM,Cleveland Browns,,Philadelphia Eagles,boxscore,22,17,324,1,315,3
-11,Sun,November 22,1:00PM,New Orleans Saints,,Atlanta Falcons,boxscore,24,9,378,1,248,2
+11,Sun,November 22,1:00PM,New Orleans Saints,,Atlanta Falcons,boxscore,24,9,376,1,248,2
 11,Sun,November 22,1:00PM,Houston Texans,,New England Patriots,boxscore,27,20,399,0,435,0
 11,Sun,November 22,1:00PM,Pittsburgh Steelers,@,Jacksonville Jaguars,boxscore,27,3,373,1,206,4
 11,Sun,November 22,1:00PM,Tennessee Titans,@,Baltimore Ravens,boxscore,30,24,423,1,306,1
@@ -162,7 +162,6 @@ Week,Day,Date,Time,Winner/tie,,Loser/tie,,PtsW,PtsL,YdsW,TOW,YdsL,TOL
 11,Mon,November 23,8:15PM,Los Angeles Rams,@,Tampa Bay Buccaneers,boxscore,27,24,413,2,251,2
 12,Thu,November 26,12:30PM,Houston Texans,@,Detroit Lions,preview,,,,,,
 12,Thu,November 26,4:30PM,Washington Football Team,@,Dallas Cowboys,preview,,,,,,
-12,Thu,November 26,8:20PM,Baltimore Ravens,@,Pittsburgh Steelers,preview,,,,,,
 12,Sun,November 29,1:00PM,Arizona Cardinals,@,New England Patriots,preview,,,,,,
 12,Sun,November 29,1:00PM,Los Angeles Chargers,@,Buffalo Bills,preview,,,,,,
 12,Sun,November 29,1:00PM,Miami Dolphins,@,New York Jets,preview,,,,,,
@@ -171,6 +170,7 @@ Week,Day,Date,Time,Winner/tie,,Loser/tie,,PtsW,PtsL,YdsW,TOW,YdsL,TOL
 12,Sun,November 29,1:00PM,Las Vegas Raiders,@,Atlanta Falcons,preview,,,,,,
 12,Sun,November 29,1:00PM,Cleveland Browns,@,Jacksonville Jaguars,preview,,,,,,
 12,Sun,November 29,1:00PM,Tennessee Titans,@,Indianapolis Colts,preview,,,,,,
+12,Sun,November 29,1:15PM,Baltimore Ravens,@,Pittsburgh Steelers,preview,,,,,,
 12,Sun,November 29,4:05PM,San Francisco 49ers,@,Los Angeles Rams,preview,,,,,,
 12,Sun,November 29,4:05PM,New Orleans Saints,@,Denver Broncos,preview,,,,,,
 12,Sun,November 29,4:25PM,Kansas City Chiefs,@,Tampa Bay Buccaneers,preview,,,,,,

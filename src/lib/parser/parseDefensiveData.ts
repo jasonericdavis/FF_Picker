@@ -1,22 +1,21 @@
-import {Offense} from '../types'
+import {Defense} from '../../types'
 
-export const calculateTeamRanks = (offenses:{[key:string]:Offense}) => {
-    Object.values(offenses).map( offense => {
-        offense.passingRank = Object.values(offenses).filter(
-            x => x.passingYards > offense.passingYards).length + 1
-        offense.rushingRank = Object.values(offenses).filter(
-            x => x.rushingYards > offense.rushingYards).length + 1
-        offense.offensiveRank = Object.values(offenses).filter(
-            x => x.totalYards > offense.totalYards).length + 1
+export const calculateTeamRanks = (defenses:{[key:string]:Defense}) => {
+    Object.values(defenses).map( defense => {
+        defense.passingRank = Object.values(defenses).filter(
+            x => x.passingYards > defense.passingYards).length + 1
+        defense.rushingRank = Object.values(defenses).filter(
+            x => x.rushingYards > defense.rushingYards).length + 1
+        defense.defensiveRank = Object.values(defenses).filter(
+            x => x.totalYards > defense.totalYards).length + 1
     })
-    return offenses
+    return defenses
 }
 
-export const parseOffensiveData = (data):{[key:string]: Offense} => {
+export const parseDefensiveData = (data):{[key:string]: Defense} => {
     let lines = data.split('\n')
     let columns = {};
-    let offenses:{[key:string]: Offense} = {};
-    
+    let defenses:{[key:string]: Defense} = {};
 
     lines.map((line, index) => {
         // the first line contains the keys
@@ -36,30 +35,31 @@ export const parseOffensiveData = (data):{[key:string]: Offense} => {
                 } 
                 columns[tempColName ] = colIndex
             })
+            // console.log(columns)
             return
         } else { 
-            let newOffense: Offense = {
+            let newDefense:Defense = {
                 team: cols[columns['Tm']],
+                pointsAllowed: Number(cols[columns['PF']]),
                 totalYards: Number(cols[columns['Yds']]),
-                passingCompletions: Number(cols[columns['Cmp']]),
+                takeAways: Number(cols[columns['TO']]),
+                fumbles: Number(cols[columns['FL']]),
                 passingAttempts: Number(cols[columns['Att']]),
+                interceptions: Number(cols[columns['Int']]),
                 passingYards: Number(cols[columns['Yds_1']]),
                 passingTouchdowns: Number(cols[columns['TD']]),
-                interceptions: Number(cols[columns['Int']]),
                 rushingAttempts: Number(cols[columns['Att_1']]),
                 rushingYards: Number(cols[columns['Yds_2']]),
                 rushingTouchdowns: Number(cols[columns['TD_1']]),
-                offensiveRank: lines.length,
+                defensiveRank: lines.length,
                 passingRank: lines.length,
                 rushingRank: lines.length
             }
-            offenses[ newOffense.team] = newOffense
+            defenses[newDefense.team] = newDefense
         }
     })
-
-
-    offenses = calculateTeamRanks(offenses)
-    return offenses
+    defenses = calculateTeamRanks(defenses)
+    return defenses
 }
 
-export default parseOffensiveData
+export default parseDefensiveData

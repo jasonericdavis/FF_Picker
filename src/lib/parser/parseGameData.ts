@@ -6,7 +6,7 @@ import {
     ScheduledGame,
     Team,
     TeamSimulation
-} from '../types'
+} from '../../types'
 
 const simulatePlayerYards = (player:Player, offense:Offense, {passingYardsDiff, rushingYardsDiff}) => {
     const perPassingYards =  player.passingYards/offense.passingYards
@@ -19,15 +19,15 @@ const simulatePlayerYards = (player:Player, offense:Offense, {passingYardsDiff, 
 
     return {
         name: player.name,
-        passingYards: player.passingYards + playerPassingDiff,
-        passingYardsDiff: playerPassingDiff,
-        passingPercentage: perPassingYards,
-        rushingYards: player.rushingYards + playerRushingDiff,
-        rushingYardsDiff: playerRushingDiff,
-        rushingPercentage: perRushingYards,
-        receivingYards: player.receivingYards + playerReceivingDiff,
-        receivingDiff: playerReceivingDiff,
-        receivingPercentage: perReceivingYards
+        passingYards: Math.round(player.passingYards + playerPassingDiff),
+        passingYardsDiff: Math.round(playerPassingDiff),
+        passingPercentage: Math.round(perPassingYards),
+        rushingYards: Math.round(player.rushingYards + playerRushingDiff),
+        rushingYardsDiff: Math.round(playerRushingDiff),
+        rushingPercentage: Math.round(perRushingYards),
+        receivingYards: Math.round(player.receivingYards + playerReceivingDiff),
+        receivingYardsDiff: Math.round(playerReceivingDiff),
+        receivingPercentage: Math.round(perReceivingYards)
     }
 
 }

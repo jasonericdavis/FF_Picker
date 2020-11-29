@@ -1,4 +1,4 @@
-import {ScheduledGame} from '../types'
+import {ScheduledGame} from '../../types'
 
 /**
  * This method parses the schedule from the csv data 

@@ -1,5 +1,5 @@
 import nicknames from './nicknames'
-import {Player} from '../types'
+import {Player} from '../../types'
 
 export const parsePlayerData = (data): {[key: string]: Player} => {
     let lines = data.split('\n')
