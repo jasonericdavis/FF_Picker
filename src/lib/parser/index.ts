@@ -4,9 +4,9 @@ import {getData} from './getPFParseData'
 
 
 const parseData = async () => {
-    const folder = path.join(process.cwd(),'data', '2020-12')
+    const folder = path.join(process.cwd(),'data', '2020-13')
 
-    return await getData(folder, path.join(process.cwd(),'data', 'pfSchedule.csv'), 12)
+    return await getData(folder, path.join(process.cwd(),'data', 'pfSchedule.csv'), 13)
     //return data
     //.then( data => data)
     //.then(({players, teams, games, units}) => {

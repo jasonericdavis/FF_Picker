@@ -29,7 +29,7 @@ const HomePage = () => {
 
   useEffect(() => {
     getData().then(data => {
-      setGames(data.games.filter(game => game.date == 'November 29' && game.kickoff == "1:00PM"))
+      setGames(data.games.filter(game => game.date == 'December 6' && game.kickoff > "3:00PM"))
     })
   }, [])
 
