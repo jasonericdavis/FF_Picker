@@ -86,6 +86,36 @@ export interface GameRatios {
     homeRushingOffense: number
 }
 
+export interface Simulation {
+    totalYards: number,
+    passingYards: number,
+    rushingYards: number
+}
+
+export interface TeamSimulation {
+    name: string,
+    totalYards: number,
+    totalYardsDiff: number,
+    passingYards: number,
+    passingYardsDiff: number,
+    rushingYards: number,
+    rushingYardsDiff: number,
+    players: Array<Player>
+}
+
+export interface PlayerSimulation {
+    name: string,
+    passingYards: number,
+    passingYardsDiff: number,
+    passingPercentage: number,
+    rushingYards: number,
+    rushingYardsDiff: number,
+    rushingPercentage: number,
+    receivingYards: number,
+    receivingYardsDiff: number,
+    receivingPercentage: number
+}
+
 export interface ScheduledGame {
     home: string,
     away: string,
@@ -94,9 +124,8 @@ export interface ScheduledGame {
 }
 
 export interface Game {
-    home: Team,
-    away: Team,
+    home: TeamSimulation,
+    away: TeamSimulation,
     date: string,
-    kickoff: string,
-    ratios: GameRatios
+    kickoff: string
 }

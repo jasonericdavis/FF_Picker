@@ -24,7 +24,7 @@ const showData = async () => {
     //         defensesEl.innerHTML += `<p>${index}. ${JSON.stringify(def)}</p>`
     //     })
     // })
-}
+};
 
 showData();
 
