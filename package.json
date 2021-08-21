@@ -4,6 +4,7 @@
   "description": "Fantasy Football Picker",
   "dependencies": {
     "next": "^10.0.2",
+    "puppeteer": "^10.2.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "tailwindcss": "^2.0.1"
@@ -15,7 +16,8 @@
     "typescript": "^4.1.2"
   },
   "scripts": {
-    "dev": "next dev"
+    "dev": "next dev",
+    "get-data": "node getData.js"
   },
   "repository": "git+https://github.com/jasonericdavis/FF_Picker.git",
   "author": "Jason Davis <jason@jasonericdavis.dev>",
