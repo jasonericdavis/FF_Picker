@@ -17,7 +17,7 @@
   },
   "scripts": {
     "dev": "next dev",
-    "get-data": "node getData.js"
+    "get-data": "node ./actions/getData.js"
   },
   "repository": "git+https://github.com/jasonericdavis/FF_Picker.git",
   "author": "Jason Davis <jason@jasonericdavis.dev>",
