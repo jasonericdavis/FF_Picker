@@ -1,32 +1,15 @@
-const https = require('https')
-console.log('Hello World')
+const puppeteer = require('puppeteer');
 
-let data = '';
+(async () => {
+    const browser = await puppeteer.launch({headless: true});
+    const page = await browser.newPage();
+    await page.goto('https://www.pro-football-reference.com/years/2020/#');
 
-const options = {
-  hostname: 'whatever.com',
-  port: 443,
-  path: '/todos',
-  method: 'GET'
-}
-
-const req = https.request("https://www.pro-football-reference.com/years/2020/fantasy.htm", res => {
+    const teamStats = await page.evaluate(() => {
+        table2csv("team_stats");
+        return document.getElementById('csv_team_stats').innerText;
+    });       
     
-  console.log(`statusCode: ${res.statusCode}`)
-
-  res.on('data', d => {
-    // process.stdout.write(d)
-    data += d
-  })
-
-//   res.on('end', () => {
-//       console.log(data)
-//   })
-})
-
-req.on('error', error => {
-  console.error(error)
-})
-
-console.log(data)
-req.end()
+    console.log(teamStats);
+    await browser.close();
+})();
