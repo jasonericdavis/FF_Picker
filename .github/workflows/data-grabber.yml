@@ -3,6 +3,10 @@ name: data-getter
 on:
   workflow_dispatch:
 
+defaults:
+  run:
+    working-directory: actions/data-grabber
+
 jobs:
   get-weekly-stats:
     runs-on: ubuntu-latest
@@ -10,4 +14,4 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
       - run: npm install
-      - run: npm run get-data
+      - run: node index.js
