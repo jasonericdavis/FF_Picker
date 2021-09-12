@@ -11,3 +11,6 @@
 /* Stop purging. */
 
 /* Your own custom utilities */
+.chart-column{
+    width: 350px;
+}
