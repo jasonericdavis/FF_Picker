@@ -5,7 +5,7 @@ on:
 
 defaults:
   run:
-    working-direction: actions/data-grabber
+    working-directory: actions/data-grabber
 
 jobs:
   get-weekly-stats:
