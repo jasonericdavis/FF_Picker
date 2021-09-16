@@ -4,11 +4,13 @@
   "description": "Fantasy Football Picker",
   "dependencies": {
     "@supabase/supabase-js": "^1.22.4",
+    "dayjs": "^1.10.7",
     "next": "^11.1.2",
     "puppeteer": "^10.2.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "tailwindcss": "^2.0.1"
+    "tailwindcss": "^2.0.1",
+    "ts-node": "^10.2.1"
   },
   "devDependencies": {
     "@types/node": "^14.14.9",
@@ -19,7 +21,8 @@
   },
   "scripts": {
     "dev": "next dev",
-    "get-data": "node ./actions/data-grabber.js"
+    "get-data": "node ./actions/data-grabber.js",
+    "build-get-data": "ts-node ./actions/data-grabber/index.ts"
   },
   "repository": "git+https://github.com/jasonericdavis/FF_Picker.git",
   "author": "Jason Davis <jason@jasonericdavis.dev>",
