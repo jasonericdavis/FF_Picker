@@ -31,6 +31,7 @@ export interface PlayerRatios {
 }
 
 export interface Defense {
+    gamesPlayed: number,
     fumbles: number,
     interceptions: number,
     passingAttempts: number,
@@ -43,21 +44,28 @@ export interface Defense {
     takeAways: number,
     team: string,
     totalYards: number,
+    averageTotalYards: number,
+    averagePassingYards: number,
+    averageRushingYards: number,
     defensiveRank: number,
     passingRank: number,
     rushingRank: number
 }
 
 export interface Offense {
+    gamesPlayed: number,
     interceptions: number,
     passingAttempts: number,
     passingCompletions: number,
     passingTouchdowns: number,
     passingYards: number,
+    averagePassingYards: number,
     rushingAttempts: number,
     rushingTouchdowns: number,
     rushingYards: number,
+    averageRushingYards: number,
     totalYards: number,
+    averageTotalYards:number,
     team: string,
     offensiveRank: number,
     passingRank: number,

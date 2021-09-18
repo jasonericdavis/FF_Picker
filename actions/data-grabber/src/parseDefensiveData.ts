@@ -1,4 +1,29 @@
 import {Defense} from './types'
+import { createStatPointer } from './util'
+
+export const columnsToDefense = (stats: string[], statPtr: {[key:string]:number}): Defense => {
+    return {
+        team: stats[statPtr['Tm']],
+        gamesPlayed: parseInt(stats[statPtr['G']], 10),
+        pointsAllowed: Number(stats[statPtr['PF']]),
+        totalYards: Number(stats[statPtr['Yds']]),
+        takeAways: Number(stats[statPtr['TO']]),
+        fumbles: Number(stats[statPtr['FL']]),
+        passingAttempts: Number(stats[statPtr['Att']]),
+        interceptions: Number(stats[statPtr['Int']]),
+        passingYards: Number(stats[statPtr['Yds_1']]),
+        passingTouchdowns: Number(stats[statPtr['TD']]),
+        averagePassingYards: Number(stats[statPtr['Yds_1']]) / Number(stats[statPtr['G']]),
+        rushingAttempts: Number(stats[statPtr['Att_1']]),
+        rushingYards: Number(stats[statPtr['Yds_2']]),
+        averageRushingYards: Number(stats[statPtr['Yds_2']]) / Number(stats[statPtr['G']]),
+        rushingTouchdowns: Number(stats[statPtr['TD_1']]),
+        averageTotalYards: Number(stats[statPtr['Yds']]) / Number(stats[statPtr['G']]),
+        defensiveRank: statPtr['Rk'],
+        passingRank: statPtr['Rk'],
+        rushingRank: statPtr['Rk']
+    }
+}
 
 export const calculateTeamRanks = (defenses:{[key:string]:Defense}) => {
     Object.values(defenses).map( defense => {
@@ -14,49 +39,33 @@ export const calculateTeamRanks = (defenses:{[key:string]:Defense}) => {
 
 export const parseDefensiveData = (data:string):{[key:string]: Defense} => {
     let lines = data.split('\n')
-    let columns:any = {};
+    let statPtr:{[key:string]: number} = {};
     let defenses:{[key:string]: Defense} = {};
 
     lines.map((line, index) => {
         // the first line contains the keys
-        const cols = line.split(',')
+        const stats = line.split(',')
         if(line.startsWith('Rk')) {
-            cols.map((col, colIndex) => {
-                let tempColName = col
-                let colNameCounter = 0
+            statPtr = createStatPointer(stats)
+            // cols.map((col, colIndex) => {
+            //     let tempColName = col
+            //     let colNameCounter = 0
 
-                /**  
-                 * Because the name of a column can appear multiple times in the list of columns
-                 * this logic will append a suffix to the column if it is already in the list of columns
-                 * */ 
-                while(columns[`${tempColName}`]) {
-                    colNameCounter += 1
-                    tempColName = `${tempColName.replace(`_${colNameCounter - 1}`, '')}_${colNameCounter}`             
-                } 
-                columns[tempColName ] = colIndex
-            })
+            //     /**  
+            //      * Because the name of a column can appear multiple times in the list of columns
+            //      * this logic will append a suffix to the column if it is already in the list of columns
+            //      * */ 
+            //     while(columns[`${tempColName}`]) {
+            //         colNameCounter += 1
+            //         tempColName = `${tempColName.replace(`_${colNameCounter - 1}`, '')}_${colNameCounter}`             
+            //     } 
+            //     columns[tempColName ] = colIndex
+            // })
             // console.log(columns)
             return
         } 
-        if(Object.keys(columns).length > 0) { 
-            let newDefense:Defense = {
-                team: cols[columns['Tm']],
-                pointsAllowed: Number(cols[columns['PF']]),
-                totalYards: Number(cols[columns['Yds']]),
-                takeAways: Number(cols[columns['TO']]),
-                fumbles: Number(cols[columns['FL']]),
-                passingAttempts: Number(cols[columns['Att']]),
-                interceptions: Number(cols[columns['Int']]),
-                passingYards: Number(cols[columns['Yds_1']]),
-                passingTouchdowns: Number(cols[columns['TD']]),
-                rushingAttempts: Number(cols[columns['Att_1']]),
-                rushingYards: Number(cols[columns['Yds_2']]),
-                rushingTouchdowns: Number(cols[columns['TD_1']]),
-                defensiveRank: lines.length,
-                passingRank: lines.length,
-                rushingRank: lines.length
-            }
-            defenses[newDefense.team] = newDefense
+        if(Object.keys(statPtr).length > 0) { 
+            defenses[stats[statPtr['Tm']]] = columnsToDefense(stats, statPtr)
         }
     })
     defenses = calculateTeamRanks(defenses)

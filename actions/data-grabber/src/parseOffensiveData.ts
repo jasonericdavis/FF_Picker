@@ -1,4 +1,27 @@
 import {Offense} from './types'
+import { createStatPointer } from './util'
+
+export const columnsToOffense = (stats: string[], statPtr: {[key:string]:number}): Offense => {
+    return {
+        team: stats[statPtr['Tm']],
+        gamesPlayed: parseInt(stats[statPtr['G']], 10),
+        totalYards: Number(stats[statPtr['Yds']]),
+        passingCompletions: Number(stats[statPtr['Cmp']]),
+        passingAttempts: Number(stats[statPtr['Att']]),
+        passingYards: Number(stats[statPtr['Yds_1']]),
+        passingTouchdowns: Number(stats[statPtr['TD']]),
+        interceptions: Number(stats[statPtr['Int']]),
+        rushingAttempts: Number(stats[statPtr['Att_1']]),
+        rushingYards: Number(stats[statPtr['Yds_2']]),
+        rushingTouchdowns: Number(stats[statPtr['TD_1']]),
+        averagePassingYards: Number(stats[statPtr['Yds_1']]) / Number(stats[statPtr['G']]),
+        averageRushingYards: Number(stats[statPtr['Yds_2']]) / Number(stats[statPtr['G']]),
+        averageTotalYards: Number(stats[statPtr['Yds']]) / Number(stats[statPtr['G']]),
+        offensiveRank: statPtr['Rk'],
+        passingRank: statPtr['Rk'],
+        rushingRank: statPtr['Rk']
+    }
+}
 
 export const calculateTeamRanks = (offenses:{[key:string]:Offense}) => {
     Object.values(offenses).map( offense => {
@@ -14,47 +37,19 @@ export const calculateTeamRanks = (offenses:{[key:string]:Offense}) => {
 
 export const parseOffensiveData = (data:string):{[key:string]: Offense} => {
     let lines = data.split('\n')
-    let columns: any = {};
+    let statPtr:{[key:string]: number} = {};
     let offenses:{[key:string]: Offense} = {};
     
 
     lines.map((line, index) => {
         // the first line contains the keys
-        const cols:any = line.split(',')
+        const stats = line.split(',')
         if(line.startsWith('Rk')) {
-            cols.map((col:string, colIndex:number) => {
-                let tempColName = col
-                let colNameCounter = 0
-
-                /**  
-                 * Because the name of a column can appear multiple times in the list of columns
-                 * this logic will append a suffix to the column if it is already in the list of columns
-                 * */ 
-                while(columns[`${tempColName}`]) {
-                    colNameCounter += 1
-                    tempColName = `${tempColName.replace(`_${colNameCounter - 1}`, '')}_${colNameCounter}`             
-                } 
-                columns[tempColName ] = colIndex
-            })
+            statPtr = createStatPointer(stats)
             return
         } 
-        if(Object.keys(columns).length > 0) { 
-            let newOffense: Offense = {
-                team: cols[columns['Tm']],
-                totalYards: Number(cols[columns['Yds']]),
-                passingCompletions: Number(cols[columns['Cmp']]),
-                passingAttempts: Number(cols[columns['Att']]),
-                passingYards: Number(cols[columns['Yds_1']]),
-                passingTouchdowns: Number(cols[columns['TD']]),
-                interceptions: Number(cols[columns['Int']]),
-                rushingAttempts: Number(cols[columns['Att_1']]),
-                rushingYards: Number(cols[columns['Yds_2']]),
-                rushingTouchdowns: Number(cols[columns['TD_1']]),
-                offensiveRank: lines.length,
-                passingRank: lines.length,
-                rushingRank: lines.length
-            }
-            offenses[ newOffense.team] = newOffense
+        if(Object.keys(statPtr).length > 0) { 
+            offenses[ stats[statPtr['Tm']]] = columnsToOffense(stats, statPtr)
         }
     })
 

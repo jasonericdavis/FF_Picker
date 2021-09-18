@@ -64,9 +64,7 @@ async function execute() {
         `${baseUrl}opp.htm`, 'team_stats'
     );
     fs.writeFileSync('./cache/defensive-stats.csv', defensiveStats);
-    //const defensiveStats = await fs.readFileSync('./cache/defensive-stats.csv', 'utf8')
     const defenses = parseDefsiveData(defensiveStats);
-    //console.log(defenses);
 
     const units = getUnits(Object.values(offenses), Object.values(defenses), Object.values(players));
     console.log(units)
