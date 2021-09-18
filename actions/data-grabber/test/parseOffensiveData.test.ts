@@ -1,8 +1,8 @@
-import {columnsToOffense, parseOffensiveData} from "../src/parseOffensiveData";
+import {createOffenseFromStats, parseOffensiveData} from "../src/parseOffensiveData";
 import fs from 'fs';
 import path from 'path'
 
-test('columnsToOffense', () => {
+test('createOffenseFromStats', () => {
     const statPtr = {
         Rk: 0,
         Tm: 1,
@@ -34,7 +34,7 @@ test('columnsToOffense', () => {
         EXP: 27
       }
     const statsCSVRow = `31,Atlanta Falcons,1,6,260,64,4.1,,0,19,21,35,136,0,0,3.6,8,26,124,0,4.8,7,12,99,4,18.2,0.0,-12.48`
-    const defense = columnsToOffense(statsCSVRow.split(','), statPtr);
+    const defense = createOffenseFromStats(statsCSVRow.split(','), statPtr);
     expect(defense.gamesPlayed).toBe(1);
     expect(defense.totalYards).toBe(260);
     expect(defense.passingYards).toBe(136);

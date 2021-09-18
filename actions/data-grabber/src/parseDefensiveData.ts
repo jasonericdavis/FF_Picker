@@ -1,7 +1,7 @@
 import {Defense} from './types'
 import { createStatPointer } from './util'
 
-export const columnsToDefense = (stats: string[], statPtr: {[key:string]:number}): Defense => {
+export const createDefenseFromStats = (stats: string[], statPtr: {[key:string]:number}): Defense => {
     return {
         team: stats[statPtr['Tm']],
         gamesPlayed: parseInt(stats[statPtr['G']], 10),
@@ -65,7 +65,7 @@ export const parseDefensiveData = (data:string):{[key:string]: Defense} => {
             return
         } 
         if(Object.keys(statPtr).length > 0) { 
-            defenses[stats[statPtr['Tm']]] = columnsToDefense(stats, statPtr)
+            defenses[stats[statPtr['Tm']]] = createDefenseFromStats(stats, statPtr)
         }
     })
     defenses = calculateTeamRanks(defenses)

@@ -48,17 +48,14 @@ async function execute() {
         `${baseUrl}#`, 'team_stats'
     );
     fs.writeFileSync('./cache/offensive-stats.csv', offensiveStats);
-    //const offensiveStats = fs.readFileSync('./cache/offensive-stats.csv', 'utf8');
     const offenses = parseOffensiveData(offensiveStats);
-    //console.log(offenses);
 
     const playerStats = await downloadData(
         `${baseUrl}fantasy.htm`, 'fantasy'
     );
     fs.writeFileSync('./cache/player-stats.csv', playerStats);
-    //const playerStats = await fs.readFileSync('./cache/player-stats.csv', 'utf8')
     const players = parsePlayerData(playerStats);
-    //console.log(players);
+
 
     const defensiveStats = await downloadData(
         `${baseUrl}opp.htm`, 'team_stats'

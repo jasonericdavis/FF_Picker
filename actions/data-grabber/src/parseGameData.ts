@@ -63,24 +63,6 @@ const simulateGameYards = ({name, offense}:Team, {defense}:Team, players: Array<
     }
 }
 
-// const simulatePlayerYards = (player, {offense, defense}:Team) => {
-//     const perTotalOffense = player.totalYards/offense.totalYards
-//     const perPassingYards = player.passingYards/offense.passingYards
-//     const perRushingYards = player.rushingYards/offense.rushingYards
-
-//     const playerStat = player.passingYards + player.rushingYards + player.receivingYards
-//     const teamOffense = offense.passingYards + offense.rushingYards
-//     const teamDefense = defense.passingYards + defense.rushingYards
-//     const ratio:PlayerRatios ={
-//         passing: player.passingYards/defense.passingYards,
-//         rushing: player.rushingYards/defense.rushingYards,
-//         receiving: player.receivingYards/defense.passingYards,
-//         offensive: playerStat/teamOffense,
-//         defense: playerStat/teamDefense
-//     }
-//     return {...player, ratio}
-// }
-
 export const parseGameData = (scheduledGames:Array<ScheduledGame>, teams:{[key: string]:Team}, players:{[key:string]: Player}, units: any) => {
     let games:Array<Game> = []
     const playerList = Object.values(players)
