@@ -1,4 +1,6 @@
- export default {
+import { nicknames } from "./types"
+
+const teamNames: nicknames = {
     "SFO":"San Francisco 49ers",
     "BUF":"Buffalo Bills" ,
     "PIT":"Pittsburgh Steelers",
@@ -32,3 +34,5 @@
     "LVR":"Las Vegas Raiders",
     "CLE":"Cleveland Browns"
 }
+
+export default teamNames;
