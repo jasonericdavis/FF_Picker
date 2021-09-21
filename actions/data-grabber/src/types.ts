@@ -2,6 +2,7 @@ export interface Player {
     fantasyPoints: number,
     id: string,
     name: string,
+    games: number,
     passingAttempts: number,
     passingCompletions: number,
     passingInterceptions: number,
@@ -77,6 +78,7 @@ export interface Offense {
 
 export interface Team {
     name: string,
+    week: number,
     offense: Offense,
     defense: Defense,
     players?: Array<Player>

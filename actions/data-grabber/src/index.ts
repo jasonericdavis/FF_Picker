@@ -6,8 +6,9 @@ import  parsePlayerData from './parsePlayerData';
 import parseOffensiveData from './parseOffensiveData';
 import parseDefsiveData from './parseDefensiveData';
 import getUnits from './getUnits';
-import { getCurrentWeeksSchedule } from './getCurrentWeeksSchedule';
+import { getCurrentWeeksSchedule } from './getSchedule';
 import parseGameData from './parseGameData';
+import { uploadTeamsToSupabase, uploadPlayersToSupabase } from './uploadToSupabase';
 
 
 const baseUrl = 'https://www.pro-football-reference.com/years/2021/'
@@ -34,11 +35,11 @@ const downloadData = async (url:string, elementId:string) => {
  * @param {Dictionary[Deffense]} defense a dictionary of the defenses
  * @returns {Dictionary[Team]} A dictionary with the respective teams
  */
- export const createTeams = (offenses:{[key:string]: Offense}, defenses:{[key:string]: Defense}):{[key:string]:Team} => {
+ export const createTeams = (week: number, offenses:{[key:string]: Offense}, defenses:{[key:string]: Defense}):{[key:string]:Team} => {
     const offensesArray:Array<Offense> = Object.values(offenses)
     const teams = {}
     offensesArray.map((offense) => {
-        teams[offense.team] = {name: offense.team, offense, defense: defenses[offense.team]}
+        teams[offense.team] = {name: offense.team, week, offense, defense: defenses[offense.team]}
     })
     return teams
 }
@@ -55,6 +56,7 @@ async function execute() {
     );
     fs.writeFileSync('./cache/player-stats.csv', playerStats);
     const players = parsePlayerData(playerStats);
+    uploadPlayersToSupabase(players);
 
 
     const defensiveStats = await downloadData(
@@ -66,11 +68,13 @@ async function execute() {
     const units = getUnits(Object.values(offenses), Object.values(defenses), Object.values(players));
     console.log(units)
 
-    const teams = createTeams(offenses, defenses);
-    //fs.writeFileSync('./cache/teams.json', JSON.stringify(teams));
-
     const scheduledGames = await getCurrentWeeksSchedule();
+    const currentWeek = scheduledGames.length > 0 ? scheduledGames[0].week : 0;
     console.log(scheduledGames);
+
+    const teams = createTeams(1, offenses, defenses);
+    uploadTeamsToSupabase(teams);
+    fs.writeFileSync('./cache/teams.json', JSON.stringify(teams));
 
     console.log('Creating Game Data')
     const games = parseGameData(scheduledGames, teams, players, units)

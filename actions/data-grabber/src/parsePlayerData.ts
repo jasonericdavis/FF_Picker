@@ -6,6 +6,7 @@ export const createPlayerFromStats = (stats: string[], statPtr: {[key:string]:nu
     return {
         name: stats[statPtr['Player']].split('\\')[0],
         id: stats[statPtr['Player']].split('\\')[1],
+        games: Number(stats[statPtr['G']]),
         position: stats[statPtr['FantPos']],
         fantasyPoints: Number(stats[statPtr['FantPt']]),
         team: nicknames[stats[statPtr['Tm']]],
