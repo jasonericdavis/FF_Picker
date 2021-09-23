@@ -18,4 +18,4 @@ jobs:
           DB_URL: ${{ secrets.DB_URL }}
           DB_PUBLIC_KEY: ${{ secrets.DB_PUBLIC_KEY}}
       - run: npm install
-      - run: node index.js
+      - run: npx ts-node src/index.ts
