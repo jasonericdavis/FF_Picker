@@ -6,9 +6,9 @@ import  parsePlayerData from './parsePlayerData';
 import parseOffensiveData from './parseOffensiveData';
 import parseDefsiveData from './parseDefensiveData';
 import getUnits from './getUnits';
-import { getCurrentWeeksSchedule } from './getSchedule';
+import { getPreviousWeeksSchedule } from './getSchedule';
 import parseGameData from './parseGameData';
-import { uploadTeamsToSupabase, uploadPlayersToSupabase } from './uploadToSupabase';
+import { uploadTeamsToSupabase, uploadPlayersToSupabase, uploadFileToStorage } from './uploadToSupabase';
 
 
 const baseUrl = 'https://www.pro-football-reference.com/years/2021/'
@@ -58,7 +58,6 @@ async function execute() {
     const players = parsePlayerData(playerStats);
     uploadPlayersToSupabase(players);
 
-
     const defensiveStats = await downloadData(
         `${baseUrl}opp.htm`, 'team_stats'
     );
@@ -68,17 +67,21 @@ async function execute() {
     const units = getUnits(Object.values(offenses), Object.values(defenses), Object.values(players));
     console.log(units)
 
-    const scheduledGames = await getCurrentWeeksSchedule();
-    const currentWeek = scheduledGames.length > 0 ? scheduledGames[0].week : 0;
-    console.log(scheduledGames);
+    const scheduledGames = await getPreviousWeeksSchedule();
+    const previousWeek = scheduledGames.length > 0 ? scheduledGames[0].week : 0;
+    console.log(previousWeek);
 
-    const teams = createTeams(1, offenses, defenses);
+    const teams = createTeams(previousWeek, offenses, defenses);
     uploadTeamsToSupabase(teams);
     fs.writeFileSync('./cache/teams.json', JSON.stringify(teams));
 
     console.log('Creating Game Data')
     const games = parseGameData(scheduledGames, teams, players, units)
     console.log(games)
+
+    uploadFileToStorage('./cache/offensive-stats.csv', previousWeek)
+    uploadFileToStorage('./cache/defensive-stats.csv', previousWeek)
+    uploadFileToStorage('./cache/player-stats.csv', previousWeek)
 };
 
 execute();
