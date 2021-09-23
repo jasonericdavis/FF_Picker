@@ -13,8 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
-      - uses: secrethub/actions/env-export@v0.2.1
-        env:
+      - env:
           DB_URL: ${{ secrets.DB_URL }}
           DB_PUBLIC_KEY: ${{ secrets.DB_PUBLIC_KEY}}
       - run: npm install
