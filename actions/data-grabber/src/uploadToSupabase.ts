@@ -1,7 +1,6 @@
 import fs from 'fs'
 import path from 'path'
 import { createClient } from '@supabase/supabase-js'
-import { SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS } from 'constants'
 import dotenv from 'dotenv'
 import {Player, Team} from './types'
 
