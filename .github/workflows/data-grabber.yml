@@ -16,5 +16,6 @@ jobs:
         env:
           DB_URL: ${{ secrets.DB_URL }}
           DB_PUBLIC_KEY: ${{ secrets.DB_PUBLIC_KEY}}
+      - run: npm install
       - run: npm run build-action-data-grabber
       - run: npm run action-data-grabber
