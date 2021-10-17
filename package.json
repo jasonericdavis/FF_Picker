@@ -27,7 +27,8 @@
   "scripts": {
     "dev": "next dev",
     "get-data": "node ./actions/data-grabber.js",
-    "build-get-data": "ts-node ./actions/data-grabber/index.ts"
+    "build-action-data-grabber": "tsc --project actions/data-grabber",
+    "action-data-grabber": "node actions/data-grabber/lib"
   },
   "repository": "git+https://github.com/jasonericdavis/FF_Picker.git",
   "author": "Jason Davis <jason@jasonericdavis.dev>",
