@@ -1,16 +1,16 @@
 import fs from 'fs'
 import path from 'path'
 import { createClient } from '@supabase/supabase-js'
-//import dotenv from 'dotenv'
+import dotenv from 'dotenv'
 import {Player, Team} from './types'
 
-//dotenv.config()
+dotenv.config()
+
+const supabaseUrl = process.env.SUPABASE_URL || ''
+const supabaseKey = process.env.SUPABASE_KEY || ''
 
 // Create a single supabase client for interacting with your database 
-const supabase = createClient(
-    process.env.DB_URL || '', 
-    process.env.DB_PUBLIC_KEY || ''
-)
+const supabase = createClient(supabaseUrl, supabaseKey)
 
 export const uploadTeamsToSupabase = async (teams: {[key:string]: Team}) => {
     try {

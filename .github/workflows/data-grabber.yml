@@ -13,6 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'npm'
         env:
           DB_URL: ${{ secrets.DB_URL }}
           DB_PUBLIC_KEY: ${{ secrets.DB_PUBLIC_KEY}}
