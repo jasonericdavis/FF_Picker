@@ -46,6 +46,10 @@ const downloadData = async (url:string, elementId:string) => {
 }
 
 async function execute() {
+    if (!fs.existsSync(cacheDir)){
+        fs.mkdirSync(cacheDir);
+    }
+
     const offensiveStats = await downloadData(
         `${baseUrl}#`, 'team_stats'
     );
