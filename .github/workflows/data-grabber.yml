@@ -16,9 +16,9 @@ jobs:
         with:
           node-version: '14'
           cache: 'npm'
-        env:
-          SUPABASE_URL: ${{ secrets.DB_URL }}
-          SUPABASE_KEY: ${{ secrets.DB_PUBLIC_KEY}}
       - run: npm install
       - run: npm run build-action-data-grabber
       - run: npm run action-data-grabber
+        env:
+          SUPABASE_URL: ${{ secrets.DB_URL }}
+          SUPABASE_KEY: ${{ secrets.DB_PUBLIC_KEY}}
