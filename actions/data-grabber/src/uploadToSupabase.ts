@@ -1,10 +1,10 @@
 import fs from 'fs'
 import path from 'path'
 import { createClient } from '@supabase/supabase-js'
-import dotenv from 'dotenv'
+//import dotenv from 'dotenv'
 import {Player, Team} from './types'
 
-dotenv.config()
+//dotenv.config()
 
 // Create a single supabase client for interacting with your database 
 const supabase = createClient(
