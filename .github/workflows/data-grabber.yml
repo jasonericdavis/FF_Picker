@@ -5,11 +5,6 @@ on:
   schedule:
     # Run at 12:00pm UTC (=8am EDT) every Thursday
     - cron: 0 12 * * 4
-
-defaults:
-  run:
-    working-directory: actions/data-grabber
-
 jobs:
   get-weekly-stats:
     runs-on: ubuntu-latest
