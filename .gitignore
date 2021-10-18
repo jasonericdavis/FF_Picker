@@ -1,5 +1,5 @@
 node_modules/
-actions/data-grabber/dist
+actions/data-grabber/lib
 actions/data-grabber/cache
 .next
 .env*

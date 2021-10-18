@@ -3,8 +3,8 @@ name: data-getter
 on:
   workflow_dispatch:
   schedule:
-    # Run at 12:30pm UTC every day
-    - cron: 30 12 * * *
+    # Run at 12:00pm UTC (=8am EDT) every Thursday
+    - cron: 0 12 * * 4
 
 defaults:
   run:
@@ -16,5 +16,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'npm'
       - run: npm install
-      - run: node index.js
+      - run: npm run build-action-data-grabber
+      - run: npm run action-data-grabber
+        env:
+          SUPABASE_URL: ${{ secrets.DB_URL }}
+          SUPABASE_KEY: ${{ secrets.DB_PUBLIC_KEY}}

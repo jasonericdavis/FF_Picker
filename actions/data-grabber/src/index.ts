@@ -2,15 +2,16 @@
 // @ts-nocheck
 const puppeteer = require('puppeteer');
 import fs from 'fs';
+import path from 'path';
 import  parsePlayerData from './parsePlayerData';
 import parseOffensiveData from './parseOffensiveData';
 import parseDefsiveData from './parseDefensiveData';
 import getUnits from './getUnits';
-import { getCurrentWeeksSchedule } from './getSchedule';
+import { getPreviousWeeksSchedule } from './getSchedule';
 import parseGameData from './parseGameData';
-import { uploadTeamsToSupabase, uploadPlayersToSupabase } from './uploadToSupabase';
+import { uploadTeamsToSupabase, uploadPlayersToSupabase, uploadFileToStorage } from './uploadToSupabase';
 
-
+const cacheDir = path.join(__dirname, '../cache');
 const baseUrl = 'https://www.pro-football-reference.com/years/2021/'
 
 const downloadData = async (url:string, elementId:string) => {
@@ -45,40 +46,47 @@ const downloadData = async (url:string, elementId:string) => {
 }
 
 async function execute() {
+    if (!fs.existsSync(cacheDir)){
+        fs.mkdirSync(cacheDir);
+    }
+
     const offensiveStats = await downloadData(
         `${baseUrl}#`, 'team_stats'
     );
-    fs.writeFileSync('./cache/offensive-stats.csv', offensiveStats);
+    fs.writeFileSync(path.join(cacheDir, 'offensive-stats.csv'), offensiveStats);
     const offenses = parseOffensiveData(offensiveStats);
 
     const playerStats = await downloadData(
         `${baseUrl}fantasy.htm`, 'fantasy'
     );
-    fs.writeFileSync('./cache/player-stats.csv', playerStats);
+    fs.writeFileSync(path.join(cacheDir,'player-stats.csv'), playerStats);
     const players = parsePlayerData(playerStats);
     uploadPlayersToSupabase(players);
-
 
     const defensiveStats = await downloadData(
         `${baseUrl}opp.htm`, 'team_stats'
     );
-    fs.writeFileSync('./cache/defensive-stats.csv', defensiveStats);
+    fs.writeFileSync(path.join(cacheDir,'defensive-stats.csv'), defensiveStats);
     const defenses = parseDefsiveData(defensiveStats);
 
     const units = getUnits(Object.values(offenses), Object.values(defenses), Object.values(players));
     console.log(units)
 
-    const scheduledGames = await getCurrentWeeksSchedule();
-    const currentWeek = scheduledGames.length > 0 ? scheduledGames[0].week : 0;
-    console.log(scheduledGames);
+    const scheduledGames = await getPreviousWeeksSchedule();
+    const previousWeek = scheduledGames.length > 0 ? scheduledGames[0].week : 0;
+    console.log(previousWeek);
 
-    const teams = createTeams(1, offenses, defenses);
+    const teams = createTeams(previousWeek, offenses, defenses);
     uploadTeamsToSupabase(teams);
-    fs.writeFileSync('./cache/teams.json', JSON.stringify(teams));
+    fs.writeFileSync(path.join(cacheDir,'teams.json'), JSON.stringify(teams));
 
     console.log('Creating Game Data')
     const games = parseGameData(scheduledGames, teams, players, units)
     console.log(games)
+
+    uploadFileToStorage(path.join(cacheDir, 'offensive-stats.csv'), previousWeek)
+    uploadFileToStorage(path.join(cacheDir, 'defensive-stats.csv'), previousWeek)
+    uploadFileToStorage(path.join(cacheDir, 'player-stats.csv'), previousWeek)
 };
 
 execute();
