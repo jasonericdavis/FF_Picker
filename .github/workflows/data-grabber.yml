@@ -2,16 +2,18 @@ name: data-getter
 
 on:
   workflow_dispatch:
-
-defaults:
-  run:
-    working-directory: actions/data-grabber
-
 jobs:
   get-weekly-stats:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'npm'
       - run: npm install
-      - run: node index.js
+      - run: npm run build-action-data-grabber
+      - run: npm run action-data-grabber
+        env:
+          SUPABASE_URL: ${{ secrets.DB_URL }}
+          SUPABASE_KEY: ${{ secrets.DB_PUBLIC_KEY}}

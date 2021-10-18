@@ -12,4 +12,6 @@ export const getPreviousWeeksSchedule = async () => {
     return season.filter(game => game.week === previousWeek.week)
 }
 
-
+export const getScheduleForWeek = async (week: number) => {
+    return season.filter(game => game.week === week)
+}
