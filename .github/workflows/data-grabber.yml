@@ -2,11 +2,6 @@ name: data-getter
 
 on:
   workflow_dispatch:
-
-defaults:
-  run:
-    working-directory: actions/data-grabber
-
 jobs:
   get-weekly-stats:
     runs-on: ubuntu-latest
