@@ -5,7 +5,7 @@ import {PlayerTable} from '../components/playerTable'
 const listSize = 20;
 
 const getData = async () =>  {
-  return fetch('/api/data').then(response => response.json())
+  return fetch('/games.json').then(response => response.json())
 }
 
 const Loading = () => <div>Loading Data</div>
@@ -29,7 +29,7 @@ const HomePage = () => {
 
   useEffect(() => {
     getData().then(data => {
-      setGames(data.games.filter(game => game.date == 'December 6' && game.kickoff > "3:00PM"))
+      setGames(data)
     })
   }, [])
 
@@ -40,8 +40,11 @@ const HomePage = () => {
   if(!games) return <div>Loading</div>
   
   return (
-    <div className='bg-gray-700'>
-      <div>Fantasy Football Picker</div>
+    <div className='bg-gray-200'>
+      <div>
+        <h1 className="text-center">Fantasy Football Picker</h1>
+        <h2 className="text-center font-bold">This IS A SAMPLE. THIS PAGE WILL CHANGE</h2>
+      </div>
       {(!games)? <Loading /> 
         :
         <div className="p-8">
