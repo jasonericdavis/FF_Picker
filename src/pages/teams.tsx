@@ -18,8 +18,11 @@ const TeamsPage = () => {
     if(!data) return <div>Loading</div>
     
     return (
-      <div className='bg-gray-700'>
-        <div>Fantasy Football Picker</div>
+      <div className='bg-gray-200'>
+        <div>
+          <h1 className="text-center">Fantasy Football Picker</h1>
+          <h2 className="text-center font-bold">This IS A SAMPLE. THIS PAGE WILL CHANGE</h2>
+      </div>
         {(!data)? <Loading /> 
         :<div className="p-8">
             <div>
