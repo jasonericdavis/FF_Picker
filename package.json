@@ -14,6 +14,7 @@
     "ts-node": "^10.2.1"
   },
   "devDependencies": {
+    "@netlify/plugin-nextjs": "^4.0.0-beta.4",
     "@types/jest": "^27.0.1",
     "@types/node": "^14.14.9",
     "@types/react": "^17.0.0",
