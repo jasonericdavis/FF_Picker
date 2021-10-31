@@ -1,10 +1,10 @@
 import dayjs from 'dayjs'
-import {useState, useEffect} from 'react'
+// import {useState, useEffect} from 'react'
+// import { useRouter } from 'next/router'
+import Link from 'next/link'
 import ScheduledGame from '../components/scheduledGame'
+import { supabase } from "../lib/util/initSupabase"
 
-const getData = async () =>  {
-    return fetch('/api/schedule').then(response => response.json())
-}
 
 /**
  * 
@@ -23,32 +23,44 @@ const returnGamesByDateTime = (games) => {
     }, {})
 }
 
-const SchedulePage = () => {
-    const [data, setData] = useState(null)
-  
-    useEffect(() => {
-      getData().then(response => {
-        const gamesByDateTime = returnGamesByDateTime(response.data)
-        setData(gamesByDateTime)
-      })
-    }, [])
+const ScheduleLink = ({game}) => {
+    return (
+        <Link href={`/game/${game.id}`} passHref>
+            <ScheduledGame game={game} />
+        </Link>
+    )
+}
 
-    if(!data) return <div>Loading Schedule</div>
+const SchedulePage = ({schedule}) => {
+    if(!schedule) return <div>Loading Schedule</div>
 
     return (
         <div className="flex-no-shrink p-2 mx-10">
-            {Object.keys(data).map(date => 
-                <>
+            {Object.keys(schedule).map((date, dateIndex) => 
+                <div key={dateIndex}>
                     <h2>{dayjs(date).format('dddd MMMM D hh:mma')}</h2>
-                    {data[date].map((game, index) => {
-                        return <ScheduledGame key={index} game={game} />
+                    {schedule[date].map((game, index) => {
+                        return <ScheduleLink game={game} key={index} />
                     })}  
-                </>              
+                </div>              
             )}
         </div>
     )
+}
 
+export async function getStaticProps({params}) {
+    // TODO: make this its own function
+    const { data, error } = await supabase
+        .from("current_week_schedule")
+        .select()
+        .order('date', {ascending: true})
 
+    return {
+        props: {
+            schedule: error ? {error } : returnGamesByDateTime(data),
+        },
+        revalidate: 1
+    }
 }
 
 export default SchedulePage
