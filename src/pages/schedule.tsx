@@ -1,6 +1,4 @@
 import dayjs from 'dayjs'
-// import {useState, useEffect} from 'react'
-// import { useRouter } from 'next/router'
 import Link from 'next/link'
 import ScheduledGame from '../components/scheduledGame'
 import { supabase } from "../lib/util/initSupabase"
