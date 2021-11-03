@@ -10,6 +10,7 @@ import getUnits from './getUnits';
 import { getPreviousWeeksSchedule } from './getSchedule';
 import parseGameData from './parseGameData';
 import { uploadTeamsToSupabase, uploadPlayersToSupabase, uploadFileToStorage } from './uploadToSupabase';
+import {teams as teamsCache} from './teams';
 
 const cacheDir = path.join(__dirname, '../cache');
 const baseUrl = 'https://www.pro-football-reference.com/years/2021/'
@@ -40,7 +41,9 @@ const downloadData = async (url:string, elementId:string) => {
     const offensesArray:Array<Offense> = Object.values(offenses)
     const teams = {}
     offensesArray.map((offense) => {
-        teams[offense.team] = {name: offense.team, week, offense, defense: defenses[offense.team]}
+        const currentTeam = teamsCache.filter(team => team.name === offense.team)
+        const teamId = currentTeam.length > 0 ? currentTeam[0].id : null;
+        teams[offense.team] = {name: offense.team, teamId, week, offense, defense: defenses[offense.team]}
     })
     return teams
 }
@@ -69,8 +72,8 @@ async function execute() {
     fs.writeFileSync(path.join(cacheDir,'defensive-stats.csv'), defensiveStats);
     const defenses = parseDefsiveData(defensiveStats);
 
-    const units = getUnits(Object.values(offenses), Object.values(defenses), Object.values(players));
-    console.log(units)
+    //const units = getUnits(Object.values(offenses), Object.values(defenses), Object.values(players));
+    //console.log(units)
 
     const scheduledGames = await getPreviousWeeksSchedule();
     const previousWeek = scheduledGames.length > 0 ? scheduledGames[0].week : 0;
@@ -79,10 +82,11 @@ async function execute() {
     const teams = createTeams(previousWeek, offenses, defenses);
     uploadTeamsToSupabase(teams);
     fs.writeFileSync(path.join(cacheDir,'teams.json'), JSON.stringify(teams));
+    console.log(teams)
 
-    console.log('Creating Game Data')
-    const games = parseGameData(scheduledGames, teams, players, units)
-    console.log(games)
+    //console.log('Creating Game Data')
+    //const games = parseGameData(scheduledGames, teams, players, units)
+    //console.log(games)
 
     uploadFileToStorage(path.join(cacheDir, 'offensive-stats.csv'), previousWeek)
     uploadFileToStorage(path.join(cacheDir, 'defensive-stats.csv'), previousWeek)
