@@ -6,8 +6,8 @@ import {Player, Team} from './types'
 
 dotenv.config()
 
-const supabaseUrl = process.env.SUPABASE_URL || ''
-const supabaseKey = process.env.SUPABASE_KEY || ''
+const supabaseUrl = process.env.DB_URL || ''
+const supabaseKey = process.env.DB_PUBLIC_KEY || ''
 
 // Create a single supabase client for interacting with your database 
 const supabase = createClient(supabaseUrl, supabaseKey)
