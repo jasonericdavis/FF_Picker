@@ -45,10 +45,10 @@ const GamePage = ({gameData}) => {
             <div className="bg-gray-200">
                 <div className="grid gap-5 mt-12 grid-cols-2">
                     <div className="relative flex flex-col justify-between p-8 lg:p-6 xl:p-8 rounded-2xl">
-                        <TeamData name={gameData.home_team} offense={gameData.home_offense} defense={gameData.home_defense}/>
+                        <TeamData name={gameData.home_team} offense={gameData.home_team_stats[0].offense} defense={gameData.home_team_stats[0].defense}/>
                     </div>
                     <div className="relative flex flex-col justify-between p-8 lg:p-6 xl:p-8 rounded-2xl">
-                        <TeamData name={gameData.away_team} offense={gameData.away_offense} defense={gameData.away_defense}/>
+                        <TeamData name={gameData.away_team} offense={gameData.away_team_stats[0].offense} defense={gameData.away_team_stats[0].defense}/>
                     </div>
                 </div>
             </div>
@@ -74,10 +74,39 @@ export async function getStaticPaths() {
 export async function getStaticProps({params}) {
     // TODO: make this its own function
     const { data, error } = await supabase
-        .rpc(`fn_getteamstatsforgame`, { gameid: params.id })
+        .from("games")
+        .select()
+        .eq('id', params.id)
+
+        if(error) return { props: { error } }
+
+        if(!data && data.length === 0) return {
+            props: {
+                gameData: {error: 'No results found'},
+            },
+            revalidate: 1
+        }
+
+        const getStats = async (teamId) => {
+            return await supabase
+                .from("team_stats")
+                .select()
+                .eq('teamid', teamId)
+                .order('week', {ascending: false})
+                .then(res => res.data)
+        } 
+
+        const [home_team_stats, away_team_stats] = await Promise.all([
+            getStats(data[0].home_team_id),
+            getStats(data[0].away_team_id)
+        ])
+
     return {
         props: {
-            gameData: data[0] || {error: 'No results found'},
+            gameData: {...data[0], 
+                home_team_stats, 
+                away_team_stats
+            },
         },
         revalidate: 1
     }
