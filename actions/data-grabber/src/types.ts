@@ -22,6 +22,7 @@ export interface Player {
     rushingYards: number,
     rushingYardsPerGame: number,
     team: string,
+    teamId:string | null,
     teamAbbr: string,
     ratios?: PlayerRatios
 }
