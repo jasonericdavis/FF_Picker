@@ -2,7 +2,12 @@ import nicknames from './nicknames'
 import { createStatPointer } from './util'
 import {Player} from './types'
 
-export const createPlayerFromStats = (stats: string[], statPtr: {[key:string]:number}): Player => {      
+export const createPlayerFromStats = (
+    stats: string[], 
+    statPtr: {[key:string]:number},
+    teams: Array<{name: string, id: string}>)
+: Player => {  
+    const playerTeam = teams.find(t => t.name === nicknames[stats[statPtr['Tm']]]) || {id: null}    
     return {
         name: stats[statPtr['Player']].split('\\')[0],
         id: stats[statPtr['Player']].split('\\')[1],
@@ -10,6 +15,7 @@ export const createPlayerFromStats = (stats: string[], statPtr: {[key:string]:nu
         position: stats[statPtr['FantPos']],
         fantasyPoints: Number(stats[statPtr['FantPt']]),
         team: nicknames[stats[statPtr['Tm']]],
+        teamId: playerTeam.id,
         teamAbbr: stats[statPtr['Tm']],
         passingAttempts: Number(stats[statPtr['Att']]),
         passingCompletions: Number(stats[statPtr['Cmp']]),
@@ -31,7 +37,7 @@ export const createPlayerFromStats = (stats: string[], statPtr: {[key:string]:nu
     }
 }
 
-export const parsePlayerData = (data: string): {[key: string]: Player} => {
+export const parsePlayerData = (data: string, teams: Array<{name: string, id: string}>): {[key: string]: Player} => {
     let lines = data.split('\n')
     let statPtr:any = {};
     let players: any = {};
@@ -46,7 +52,7 @@ export const parsePlayerData = (data: string): {[key: string]: Player} => {
         // If the columns have been populated then we can begin to parse the data
         if(Object.keys(statPtr).length > 0) { 
             //use the columns to create an object for each player and push into array
-            let player = createPlayerFromStats(stats, statPtr)
+            let player = createPlayerFromStats(stats, statPtr, teams)
             players[player.name] = player
         }
 })

@@ -21,12 +21,12 @@ export const uploadTeamsToSupabase = async (teams: {[key:string]: Team}) => {
     }
 }
 
-export const uploadPlayersToSupabase = async (players: {[key:string]: Player}) => {
+export const uploadPlayersToSupabase = async (players: {[key:string]: Player}, week: number) => {
     try {
         const playerArray = Object.values(players).reduce((acc, player) => {
-            acc.push({playerId:player.id, week: player.games, stats: player})
+            acc.push({playerId:player.id, teamId:player.teamId, week, stats: player})
             return acc
-        }, [] as Array<{playerId: string, week: number, stats: Player}>)
+        }, [] as Array<{playerId: string, teamId: string | null, week: number, stats: Player}>)
         await supabase.from('player_stats').insert(playerArray)
     } catch (error) {
         console.log(error)

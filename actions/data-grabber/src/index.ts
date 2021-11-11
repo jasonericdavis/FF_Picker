@@ -59,35 +59,30 @@ async function execute() {
     fs.writeFileSync(path.join(cacheDir, 'offensive-stats.csv'), offensiveStats);
     const offenses = parseOffensiveData(offensiveStats);
 
-    const playerStats = await downloadData(
-        `${baseUrl}fantasy.htm`, 'fantasy'
-    );
-    fs.writeFileSync(path.join(cacheDir,'player-stats.csv'), playerStats);
-    const players = parsePlayerData(playerStats);
-    uploadPlayersToSupabase(players);
-
     const defensiveStats = await downloadData(
         `${baseUrl}opp.htm`, 'team_stats'
     );
     fs.writeFileSync(path.join(cacheDir,'defensive-stats.csv'), defensiveStats);
     const defenses = parseDefsiveData(defensiveStats);
 
-    //const units = getUnits(Object.values(offenses), Object.values(defenses), Object.values(players));
-    //console.log(units)
-
     const scheduledGames = await getPreviousWeeksSchedule();
     const previousWeek = scheduledGames.length > 0 ? scheduledGames[0].week : 0;
     console.log(previousWeek);
 
     const teams = createTeams(previousWeek, offenses, defenses);
-    uploadTeamsToSupabase(teams);
+    
     fs.writeFileSync(path.join(cacheDir,'teams.json'), JSON.stringify(teams));
     console.log(teams)
 
-    //console.log('Creating Game Data')
-    //const games = parseGameData(scheduledGames, teams, players, units)
-    //console.log(games)
-
+    const playerStats = await downloadData(
+        `${baseUrl}fantasy.htm`, 'fantasy'
+    );
+    fs.writeFileSync(path.join(cacheDir,'player-stats.csv'), playerStats);
+    const players = parsePlayerData(playerStats, teamsCache);
+    console.log(players)
+    
+    uploadTeamsToSupabase(teams);
+    uploadPlayersToSupabase(players, previousWeek);
     uploadFileToStorage(path.join(cacheDir, 'offensive-stats.csv'), previousWeek)
     uploadFileToStorage(path.join(cacheDir, 'defensive-stats.csv'), previousWeek)
     uploadFileToStorage(path.join(cacheDir, 'player-stats.csv'), previousWeek)
