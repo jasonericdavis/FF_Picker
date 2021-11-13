@@ -52,7 +52,9 @@ export async function getStaticProps({params}) {
         .from("current_week_schedule")
         .select()
         .order('date', {ascending: true})
-
+    
+    console.log(data)
+    
     return {
         props: {
             schedule: error ? {error } : returnGamesByDateTime(data),
