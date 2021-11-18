@@ -36,12 +36,15 @@ const SchedulePage = ({schedule}) => {
         <div className="flex-no-shrink p-2 mx-10">
             {Object.keys(schedule).map((date, dateIndex) => 
                 <div key={dateIndex}>
-                    <h2>{dayjs(date).format('dddd MMMM D hh:mma')}</h2>
+                    <h2 className="text-center font-bold text-xl py-5">{dayjs(date).format('dddd MMMM D, hh:mma')}</h2>
                     {schedule[date].map((game, index) => {
                         return <ScheduleLink game={game} key={index} />
                     })}  
                 </div>              
             )}
+            <footer className="py-5">
+                <p>Team Colors courtesy of <a href="https://teamcolors.jim-nielsen.com/">https://teamcolors.jim-nielsen.com</a> </p>
+            </footer>
         </div>
     )
 }
@@ -52,7 +55,7 @@ export async function getStaticProps({params}) {
         .from("current_week_schedule")
         .select()
         .order('date', {ascending: true})
-
+    
     return {
         props: {
             schedule: error ? {error } : returnGamesByDateTime(data),

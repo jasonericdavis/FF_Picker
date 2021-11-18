@@ -1,58 +1,77 @@
 import { supabase } from "../../lib/util/initSupabase"
+import BackButton from "../../components/backButton"
 
-const TeamData = ({name, offense, defense}) => {
-    return (
-        <>
-            <div className="absolute inset-0 w-full h-full transform translate-x-2 translate-y-2 bg-blue-200 rounded-2xl"></div>
-            <div className="absolute inset-0 w-full h-full border-2 border-gray-500 rounded-2xl"></div>
-            <div className="relative flex pb-5 space-x-5 border-b border-gray-500 lg:space-x-3 xl:space-x-5">
-                <h1>{name}</h1>
-            </div>
-            <ul className="relative py-2 space-y-3">
-                <li><h2>Offense</h2></li>
-                <li className="flex items-center space-x-2 text-sm font-medium text-gray-500">
-                    <span>{`Average Total Yards: ${Math.round(offense.averageTotalYards)}`}</span>
-                </li>
-                <li className="flex items-center space-x-2 text-sm font-medium text-gray-500">
-                    <span>{`Average Passing Yards: ${Math.round(offense.averagePassingYards)}`}</span>
-                </li>
-                <li className="flex items-center space-x-2 text-sm font-medium text-gray-500">
-                    <span>{`Average Rushing Yards: ${Math.round(offense.averageRushingYards)}`}</span>
-                </li>
-            </ul>
-            <hr className="relative py-2 space-y-3"/>
-            <ul className="relative py-2 space-y-3">
-                <li><h2>Defense</h2></li>
-                <li className="flex items-center space-x-2 text-sm font-medium text-gray-500">
-                    <span>{`Average Total Yards: ${Math.round(defense.averageTotalYards)}`}</span>
-                </li>
-                <li className="flex items-center space-x-2 text-sm font-medium text-gray-500">
-                    <span>{`Average Passing Yards: ${Math.round(defense.averagePassingYards)}`}</span>
-                </li>
-                <li className="flex items-center space-x-2 text-sm font-medium text-gray-500">
-                    <span>{`Average Rushing Yards: ${Math.round(defense.averageRushingYards)}`}</span>
-                </li>
-            </ul>
-        </>
-    )
+const StatRow = ({stat, home_team_stat, home_team_name, away_team_stat, away_team_name}) => {
+    return <>
+        <div className={`p-8 space-x-2 text-xl text-center text-gray-800 ${home_team_stat > away_team_stat ? `${home_team_name.toLowerCase()}_background_color` : null}`}>
+            {home_team_stat}
+        </div>
+        <div className={`p-8 space-x-2 text-m text-center text-gray-800`}>
+            {stat}
+        </div>
+        <div className={`p-8 space-x-2 text-xl text-center text-gray-800 ${home_team_stat < away_team_stat ? `${away_team_name.toLowerCase()}_background_color` : null}`}>
+            {away_team_stat}
+        </div>
+    </>
 }
-
 const GamePage = ({gameData}) => {
     if(!gameData) return <div>Loading Game</div>
 
+    const home_stats = gameData.home_team_stats[0]
+    const away_stats = gameData.away_team_stats[0]
+
     return (
-        <section className="w-full pt-16 pb-20 bg-gray-50">
-            <div className="bg-gray-200">
-                <div className="grid gap-5 mt-12 grid-cols-2">
-                    <div className="relative flex flex-col justify-between p-8 lg:p-6 xl:p-8 rounded-2xl">
-                        <TeamData name={gameData.home_team} offense={gameData.home_offense} defense={gameData.home_defense}/>
-                    </div>
-                    <div className="relative flex flex-col justify-between p-8 lg:p-6 xl:p-8 rounded-2xl">
-                        <TeamData name={gameData.away_team} offense={gameData.away_offense} defense={gameData.away_defense}/>
+        <>
+            <div className="m-5"><BackButton /></div>
+            <section className="w-full pt-16 pb-20 bg-gray-50">
+                <div className="">
+                    <div className="grid gap-5 mt-12 grid-cols-3">
+                        <div>
+                            <h1 className={`text-center font-bold text-xl ${gameData.home_team.toLowerCase()}_primary_color`}>{gameData.home_team.replaceAll("_", " ")}</h1>
+                        </div>
+                        <div></div>
+                        <div>
+                            <h1 className={`text-center font-bold text-xl ${gameData.away_team.toLowerCase()}_primary_color`}>{gameData.away_team.replaceAll("_", " ")} </h1>
+                        </div>
+
+                        <div className="col-span-full"><hr /></div>
+                        <div><h1 className="text-center font-bold text-xl">Offense</h1></div>
+                        <div></div>
+                        <div><h1 className="text-center font-bold text-xl">Defense</h1></div>
+                        
+                        <StatRow stat={"Average Total Yards"} 
+                            home_team_stat={Math.round(home_stats.offense.averageTotalYards)} 
+                            away_team_stat={Math.round(away_stats.defense.averageTotalYards)}
+                            home_team_name={gameData.home_team} away_team_name={gameData.away_team} />
+                        <StatRow stat={"Average Passing Yards"}
+                            home_team_stat={Math.round(home_stats.offense.averagePassingYards)} 
+                            away_team_stat={Math.round(away_stats.defense.averagePassingYards)} 
+                            home_team_name={gameData.home_team} away_team_name={gameData.away_team}/>
+                        <StatRow stat={"Average Rushing Yards"}
+                            home_team_stat={Math.round(home_stats.offense.averageRushingYards)} 
+                            away_team_stat={Math.round(away_stats.defense.averageRushingYards)}
+                            home_team_name={gameData.home_team} away_team_name={gameData.away_team} />
+                        
+                        <div className="col-span-full"><hr /></div>
+                        <div><h1 className="text-center font-bold text-xl">Defense</h1></div>
+                        <div></div>
+                        <div><h1 className="text-center font-bold text-xl">Offense</h1></div>
+                        <StatRow stat={"Average Total Yards"} 
+                            home_team_stat={Math.round(home_stats.defense.averageTotalYards)} 
+                            away_team_stat={Math.round(away_stats.offense.averageTotalYards)}
+                            home_team_name={gameData.home_team} away_team_name={gameData.away_team} />
+                        <StatRow stat={"Average Passing Yards"} 
+                            home_team_stat={Math.round(home_stats.defense.averagePassingYards)}
+                            away_team_stat={Math.round(away_stats.offense.averagePassingYards)}
+                            home_team_name={gameData.home_team} away_team_name={gameData.away_team} />
+                        <StatRow stat={"Average Rushing Yards"}
+                            home_team_stat={Math.round(home_stats.defense.averageRushingYards)}
+                            away_team_stat={Math.round(away_stats.offense.averageRushingYards)}
+                            home_team_name={gameData.home_team} away_team_name={gameData.away_team} />
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </>
     )
 }
 
@@ -74,10 +93,48 @@ export async function getStaticPaths() {
 export async function getStaticProps({params}) {
     // TODO: make this its own function
     const { data, error } = await supabase
-        .rpc(`fn_getteamstatsforgame`, { gameid: params.id })
+        .from("games")
+        .select()
+        .eq('id', params.id)
+
+        if(error) return { props: { error } }
+
+        if(!data && data.length === 0) return {
+            props: {
+                gameData: {error: 'No results found'},
+            },
+            revalidate: 1
+        }
+
+        const getStats = async (teamId) => {
+            return await supabase
+                .from("team_stats")
+                .select(`
+                    name
+                    ,week
+                    ,offense
+                    ,defense
+                    ,teams (
+                        id
+                        ,primarycolor
+                    )
+                `)
+                .eq('teamid', teamId)
+                .order('week', {ascending: false})
+                .then(res => res.data)
+        } 
+
+        const [home_team_stats, away_team_stats] = await Promise.all([
+            getStats(data[0].home_team_id),
+            getStats(data[0].away_team_id)
+        ])
+
     return {
         props: {
-            gameData: data[0] || {error: 'No results found'},
+            gameData: {...data[0], 
+                home_team_stats, 
+                away_team_stats
+            },
         },
         revalidate: 1
     }
