@@ -23,18 +23,6 @@ export const createOffenseFromStats = (stats: string[], statPtr: {[key:string]:n
     }
 }
 
-export const calculateTeamRanks = (offenses:{[key:string]:Offense}) => {
-    Object.values(offenses).map( offense => {
-        offense.passingRank = Object.values(offenses).filter(
-            x => x.passingYards > offense.passingYards).length + 1
-        offense.rushingRank = Object.values(offenses).filter(
-            x => x.rushingYards > offense.rushingYards).length + 1
-        offense.offensiveRank = Object.values(offenses).filter(
-            x => x.totalYards > offense.totalYards).length + 1
-    })
-    return offenses
-}
-
 export const parseOffensiveData = (data:string):{[key:string]: Offense} => {
     let lines = data.split('\n')
     let statPtr:{[key:string]: number} = {};
@@ -52,9 +40,6 @@ export const parseOffensiveData = (data:string):{[key:string]: Offense} => {
             offenses[ stats[statPtr['Tm']]] = createOffenseFromStats(stats, statPtr)
         }
     })
-
-
-    offenses = calculateTeamRanks(offenses)
     return offenses
 }
 

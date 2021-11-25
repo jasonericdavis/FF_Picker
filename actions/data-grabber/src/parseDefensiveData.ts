@@ -25,17 +25,6 @@ export const createDefenseFromStats = (stats: string[], statPtr: {[key:string]:n
     }
 }
 
-export const calculateTeamRanks = (defenses:{[key:string]:Defense}) => {
-    Object.values(defenses).map( defense => {
-        defense.passingRank = Object.values(defenses).filter(
-            x => x.passingYards > defense.passingYards).length + 1
-        defense.rushingRank = Object.values(defenses).filter(
-            x => x.rushingYards > defense.rushingYards).length + 1
-        defense.defensiveRank = Object.values(defenses).filter(
-            x => x.totalYards > defense.totalYards).length + 1
-    })
-    return defenses
-}
 
 export const parseDefensiveData = (data:string):{[key:string]: Defense} => {
     let lines = data.split('\n')
@@ -47,28 +36,12 @@ export const parseDefensiveData = (data:string):{[key:string]: Defense} => {
         const stats = line.split(',')
         if(line.startsWith('Rk')) {
             statPtr = createStatPointer(stats)
-            // cols.map((col, colIndex) => {
-            //     let tempColName = col
-            //     let colNameCounter = 0
-
-            //     /**  
-            //      * Because the name of a column can appear multiple times in the list of columns
-            //      * this logic will append a suffix to the column if it is already in the list of columns
-            //      * */ 
-            //     while(columns[`${tempColName}`]) {
-            //         colNameCounter += 1
-            //         tempColName = `${tempColName.replace(`_${colNameCounter - 1}`, '')}_${colNameCounter}`             
-            //     } 
-            //     columns[tempColName ] = colIndex
-            // })
-            // console.log(columns)
             return
         } 
         if(Object.keys(statPtr).length > 0) { 
             defenses[stats[statPtr['Tm']]] = createDefenseFromStats(stats, statPtr)
         }
     })
-    defenses = calculateTeamRanks(defenses)
     return defenses
 }
 
