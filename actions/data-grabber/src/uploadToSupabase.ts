@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import { createClient } from '@supabase/supabase-js'
 import dotenv from 'dotenv'
-import {Player, Team} from './types'
+import {Player, Players, Team} from './types'
 
 dotenv.config()
 
@@ -26,7 +26,7 @@ export const uploadPlayersToSupabase = async (players: {[key:string]: Player}, w
         const playerArray = Object.values(players).reduce((acc, player) => {
             acc.push({playerId:player.id, teamId:player.teamId, week, stats: player})
             return acc
-        }, [] as Array<{playerId: string, teamId: string | null, week: number, stats: Player}>)
+        }, [] as Players)
         await supabase.from('player_stats').insert(playerArray)
     } catch (error) {
         console.log(error)

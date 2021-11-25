@@ -27,6 +27,13 @@ export interface Player {
     ratios?: PlayerRatios
 }
 
+export type Players = Array<{
+    playerId: string,
+    teamId: string | null,
+    week: number,
+    stats: Player
+}>
+
 export interface PlayerRatios {
     defense: number,
     offensive: number,
@@ -82,7 +89,7 @@ export interface Team {
     week: number,
     offense: Offense,
     defense: Defense,
-    players?: Array<Player>
+    players?: Players
 }
 
 export interface GameRatios {
