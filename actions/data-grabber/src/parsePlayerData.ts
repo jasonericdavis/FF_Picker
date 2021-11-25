@@ -1,6 +1,8 @@
 import nicknames from './nicknames'
 import { createStatPointer } from './util'
-import {Player} from './types'
+import {Player} from './types';
+import {teams as teamsCache} from './teams';
+
 
 export const createPlayerFromStats = (
     stats: string[], 

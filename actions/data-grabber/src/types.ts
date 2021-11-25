@@ -87,6 +87,7 @@ export interface Offense {
 export interface Team {
     name: string,
     week: number,
+    teamId: string | null,
     offense: Offense,
     defense: Defense,
     players?: Players

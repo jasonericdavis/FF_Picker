@@ -25,7 +25,6 @@ export const createDefenseFromStats = (stats: string[], statPtr: {[key:string]:n
     }
 }
 
-
 export const parseDefensiveData = (data:string):{[key:string]: Defense} => {
     let lines = data.split('\n')
     let statPtr:{[key:string]: number} = {};
