@@ -67,19 +67,18 @@ async function execute() {
 
     const scheduledGames = await getPreviousWeeksSchedule();
     const previousWeek = scheduledGames.length > 0 ? scheduledGames[0].week : 0;
-    console.log(previousWeek);
+    console.log(`Processing Week: ${previousWeek}`);
 
     const teams = createTeams(previousWeek, offenses, defenses);
     
     fs.writeFileSync(path.join(cacheDir,'teams.json'), JSON.stringify(teams));
-    console.log(teams)
 
     const playerStats = await downloadData(
         `${baseUrl}fantasy.htm`, 'fantasy'
     );
     fs.writeFileSync(path.join(cacheDir,'player-stats.csv'), playerStats);
     const players = parsePlayerData(playerStats, teamsCache);
-    console.log(players)
+
     
     uploadTeamsToSupabase(teams);
     uploadPlayersToSupabase(players, previousWeek);

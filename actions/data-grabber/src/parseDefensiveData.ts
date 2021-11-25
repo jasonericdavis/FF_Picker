@@ -19,9 +19,9 @@ export const createDefenseFromStats = (stats: string[], statPtr: {[key:string]:n
         averageRushingYards: Number(stats[statPtr['Yds_2']]) / Number(stats[statPtr['G']]),
         rushingTouchdowns: Number(stats[statPtr['TD_1']]),
         averageTotalYards: Number(stats[statPtr['Yds']]) / Number(stats[statPtr['G']]),
-        defensiveRank: statPtr['Rk'],
-        passingRank: statPtr['Rk'],
-        rushingRank: statPtr['Rk']
+        defensiveRank: Number(stats[statPtr['Rk']]),
+        passingRank: Number(stats[statPtr['Rk']]),
+        rushingRank: Number(stats[statPtr['Rk']])
     }
 }
 
