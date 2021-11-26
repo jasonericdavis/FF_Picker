@@ -30,5 +30,8 @@ export const teams: Array<{id:string, name: string, abbreviation: string}> = [
     {"id": "cdc9cce4-81d0-48a1-b4bb-7203afd0a91f","name": "Denver Broncos", "abbreviation": "DEN"},
     {"id": "e380ed59-0887-4456-a677-4839ecdff36f","name": "Detroit Lions", "abbreviation": "DET"},
     {"id": "e79a2572-b202-4f17-8454-5a8f17547065","name": "San Francisco 49ers", "abbreviation": "SF"},
-    {"id": "faa5e290-e5ed-45d5-b333-882c8e957ccf","name": "Cleveland Browns", "abbreviation": "CLE"}
+    {"id": "faa5e290-e5ed-45d5-b333-882c8e957ccf","name": "Cleveland Browns", "abbreviation": "CLE"},
+    {"id": "aff185a2-4dac-49b1-bed9-043219c045c4","name": "Avg Team", "abbreviation": "AVGT"},	
+    {"id": "2c022452-7e62-427c-ae84-051b339e1b3f","name": "Avg Tm/G", "abbreviation": "ATG"},	
+    {"id": "b57db0ad-dae0-4fa4-89de-8f19775a8f01","name": "League Total", "abbreviation": "LGT"}
 ];

@@ -119,7 +119,7 @@ export async function getStaticProps({params}) {
                         ,primarycolor
                     )
                 `)
-                .eq('teamid', teamId)
+                .eq('teamId', teamId)
                 .order('week', {ascending: false})
                 .then(res => res.data)
         } 
