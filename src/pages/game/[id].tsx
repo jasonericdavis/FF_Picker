@@ -51,6 +51,18 @@ const GamePage = ({gameData}) => {
                             home_team_stat={Math.round(home_stats.offense.averageRushingYards)} 
                             away_team_stat={Math.round(away_stats.defense.averageRushingYards)}
                             home_team_name={gameData.home_team} away_team_name={gameData.away_team} />
+                        <StatRow stat={"Overall Rank"}
+                            home_team_stat={Math.round(home_stats.offense.offensiveRank)} 
+                            away_team_stat={Math.round(away_stats.defense.defensiveRank)}
+                            home_team_name={gameData.home_team} away_team_name={gameData.away_team} />
+                        <StatRow stat={"Passing Rank"}
+                            home_team_stat={Math.round(home_stats.offense.passingRank)} 
+                            away_team_stat={Math.round(away_stats.defense.passingRank)}
+                            home_team_name={gameData.home_team} away_team_name={gameData.away_team} />
+                        <StatRow stat={"Rushing Rank"}
+                            home_team_stat={Math.round(home_stats.offense.rushingRank)} 
+                            away_team_stat={Math.round(away_stats.defense.rushingRank)}
+                            home_team_name={gameData.home_team} away_team_name={gameData.away_team} />
                         
                         <div className="col-span-full"><hr /></div>
                         <div><h1 className="text-center font-bold text-xl">Defense</h1></div>
@@ -67,6 +79,18 @@ const GamePage = ({gameData}) => {
                         <StatRow stat={"Average Rushing Yards"}
                             home_team_stat={Math.round(home_stats.defense.averageRushingYards)}
                             away_team_stat={Math.round(away_stats.offense.averageRushingYards)}
+                            home_team_name={gameData.home_team} away_team_name={gameData.away_team} />
+                        <StatRow stat={"Overall Rank"}
+                            home_team_stat={Math.round(home_stats.defense.defensiveRank)}
+                            away_team_stat={Math.round(away_stats.offense.offensiveRank)}
+                            home_team_name={gameData.home_team} away_team_name={gameData.away_team} />
+                        <StatRow stat={"Passing Rank"}
+                            home_team_stat={Math.round(home_stats.defense.passingRank)} 
+                            away_team_stat={Math.round(away_stats.offense.passingRank)}
+                            home_team_name={gameData.home_team} away_team_name={gameData.away_team} />
+                        <StatRow stat={"Rushing Rank"}
+                            home_team_stat={Math.round(home_stats.defense.rushingRank)} 
+                            away_team_stat={Math.round(away_stats.offense.rushingRank)}
                             home_team_name={gameData.home_team} away_team_name={gameData.away_team} />
                     </div>
                 </div>

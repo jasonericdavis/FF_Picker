@@ -30,8 +30,9 @@
 }
 
 .buffalo_bills_background_color {
-    background-color: #00338D;
-    color: #C60C30;
+    color: #00338D;
+    background-color: #C60C30;
+    font-weight: bold;
 }
 
 .carolina_panthers_primary_color {
@@ -202,7 +203,8 @@
 
 .new_york_giants_background_color {
     background-color: #0B2265;
-    color: #A71930;
+    /* color: #A71930; */
+    color: #FFFFFF;
 }
 
 .new_york_jets_primary_color {

@@ -15,7 +15,7 @@ jobs:
         with:
           node-version: '12'
           cache: 'npm'
-      - run: npx insall playwright
+      - run: npm insall playwright
       - uses: ./.github/actions/data-grabber
         name: Download Data
         env:
