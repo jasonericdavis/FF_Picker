@@ -1,6 +1,4 @@
 node_modules/
-actions/data-grabber/lib
-actions/data-grabber/cache
 .next
 .env*
 .DS_Store

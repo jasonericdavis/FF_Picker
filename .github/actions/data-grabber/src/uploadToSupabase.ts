@@ -52,3 +52,22 @@ export function uploadCache(week: number, files: Array<string>) {
     // uploadFileToStorage(path.join(cacheDir, 'defensive-stats.csv'), previousWeek)
     // uploadFileToStorage(path.join(cacheDir, 'player-stats.csv'), previousWeek)
 }
+
+export async function getCacheFiles(week: number) {
+    const getCacheFile = async (filename: string) => {
+        const { data, error } = await supabase.storage
+            .from(`ff-picker-weekly-stats`)
+            .download(`2021/w${week}/${filename}`)
+            console.log(`${error ? `Error: ${error.message}` : `week ${week} -> ${filename} download succesful`}`)
+        if(data)
+            return data.text().then(t=>t)
+        else 
+            return null
+    }
+
+    return await Promise.all([
+        getCacheFile('offensive-stats.csv'),
+        getCacheFile('defensive-stats.csv'),
+        getCacheFile('player-stats.csv')
+    ])
+}

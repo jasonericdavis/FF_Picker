@@ -1,10 +1,10 @@
 // @ts-nocheck
-const puppeteer = require('puppeteer');
+const { chromium} = require('playwright');
 
 const baseUrl = 'https://www.pro-football-reference.com/years/2021/'
 
 async function downloadData(url:string, elementId:string){
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await chromium.launch({ headless: true });
     const page = await browser.newPage();
 
     console.log(`Downloading ${url}`)
