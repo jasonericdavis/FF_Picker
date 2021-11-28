@@ -3,7 +3,6 @@ import { getPreviousWeeksSchedule } from './getSchedule';
 import { uploadTeamsToSupabase, uploadPlayersToSupabase, uploadCache } from './uploadToSupabase';
 import getStats from './getStats';
 import parseData from './parseData';
-import cacheStats from './cacheStats';
 
 async function run() {
     console.log('Downloading schedule...');
@@ -21,14 +20,15 @@ async function run() {
         );
     });
 
-    const cache = await cacheStats(
-        offensiveStats, defensiveStats, playerStats, teams
-    )
-
     console.log('Uploading to Supabase...');
     uploadTeamsToSupabase(teams);
     uploadPlayersToSupabase(players, previousWeek);
-    uploadCache(previousWeek, cache);
+    uploadCache(previousWeek, [
+        {filename: 'offensive-stats.csv', data: offensiveStats},
+        {filename: 'defensive-stats.csv', data: defensiveStats},
+        {filename: 'player-stats.csv', data: playerStats},
+        {filename: 'teams.json', data: JSON.stringify(teams)},
+    ]);
     core.endGroup();
 };
 

@@ -1,3 +1,6 @@
+
+## Before Committing Run the `npm build` Command
+
 ## action.yaml
 This file give metadata about the action itself
 
