@@ -36,7 +36,7 @@ async function uploadFileToStorage(weekNumber: number, file:{filename: string, d
             .from('ff-picker-weekly-stats')
             .upload(storageFilename, file.data)
         if (error) {
-            core.error(`Error (${storageFilename}): ${error.message}`)
+            core.notice(`Error Uploading (${storageFilename}): ${error.message}`)
         } else {
             core.info(file.filename)
         }

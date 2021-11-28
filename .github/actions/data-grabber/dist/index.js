@@ -1978,6 +1978,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.calculateTeamRank = exports.calculateTeamRanks = void 0;
+var core = __nccwpck_require__(2186);
 var nicknames_1 = __importDefault(__nccwpck_require__(9933));
 var teams_1 = __nccwpck_require__(267);
 /**
@@ -2004,6 +2005,7 @@ function createStatPointer(statHeaders) {
     return statPtr;
 }
 function createOffenseFromStats(stats, statPtr) {
+    core.info("Creating Offense for ".concat(stats[statPtr['Tm']]));
     return {
         team: stats[statPtr['Tm']],
         gamesPlayed: parseInt(stats[statPtr['G']], 10),
@@ -2042,6 +2044,7 @@ function parseOffensiveData(data) {
     return offenses;
 }
 function createDefenseFromStats(stats, statPtr) {
+    core.info("Creating Defense for ".concat(stats[statPtr['Tm']]));
     return {
         team: stats[statPtr['Tm']],
         gamesPlayed: parseInt(stats[statPtr['G']], 10),
@@ -2157,10 +2160,6 @@ function parsePlayerData(data, teams, week) {
             players[player.name] = { playerId: player.id, teamId: player.teamId, week: week, stats: player };
         }
     });
-    // const playerArray = Object.values(players).reduce((acc, player) => {
-    //     acc.push({playerId:player.id, teamId:player.teamId, week, stats: player})
-    //     return acc
-    // }, [] as Players)
     return players;
 }
 /**
@@ -2174,6 +2173,7 @@ function createTeams(week, offenses, defenses) {
     var offensesArray = Object.values(offenses);
     var teams = {};
     offensesArray.map(function (offense) {
+        core.info("Creating team for ".concat(offense.team));
         var currentTeam = teams_1.teams.filter(function (team) { return team.name === offense.team; });
         var teamId = currentTeam.length > 0 ? currentTeam[0].id : null;
         teams[offense.team] = { name: offense.team, teamId: teamId, week: week, offense: offense, defense: defenses[offense.team] };
@@ -2181,10 +2181,22 @@ function createTeams(week, offenses, defenses) {
     return teams;
 }
 function parseData(offensiveStats, defensiveStats, playerStats, week) {
+    core.startGroup('Parsing Offensive Data');
     var offenses = parseOffensiveData(offensiveStats);
+    core.info("".concat(Object.keys(offenses).length, " offenses created"));
+    core.endGroup();
+    core.startGroup('Parsing Defensive Data');
     var defenses = parseDefensiveData(defensiveStats);
+    core.info("".concat(Object.keys(defenses).length, " defenses created"));
+    core.endGroup();
+    core.startGroup('Creating Teams');
     var teams = createTeams(week, offenses, defenses);
+    core.info("".concat(Object.keys(teams).length, " teams created"));
+    core.endGroup();
+    core.startGroup('Parsing Player Data');
     var players = parsePlayerData(playerStats, teams_1.teams, week);
+    core.info("".concat(Object.keys(players).length, " players created"));
+    core.endGroup();
     return { teams: teams, players: players };
 }
 exports["default"] = parseData;
@@ -2349,7 +2361,7 @@ function uploadFileToStorage(weekNumber, file) {
                 case 1:
                     _a = _b.sent(), data = _a.data, error = _a.error;
                     if (error) {
-                        core.error("Error (".concat(storageFilename, "): ").concat(error.message));
+                        core.notice("Error Uploading (".concat(storageFilename, "): ").concat(error.message));
                     }
                     else {
                         core.info(file.filename);
