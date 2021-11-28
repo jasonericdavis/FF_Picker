@@ -3,6 +3,8 @@ import {Offense, Defense, Player,Team} from './types'
 import nicknames from './nicknames'
 import {teams as teamsCache} from './teams';
 
+const leagueValues = ['Avg Team', 'Avg Tm/G', 'League Total']
+
 /**
  * This function takes a array of statHeaders and returns them as an object with the 
  * position of the stat in the staHeaders array
@@ -68,6 +70,11 @@ function parseOffensiveData(data:string):{[key:string]: Offense} {
             offenses[ stats[statPtr['Tm']]] = createOffenseFromStats(stats, statPtr)
         }
     })
+    offenses = calculateTeamRank(
+        offenses, 'passingYards', 'passingRank', leagueValues)
+    
+    offenses = calculateTeamRank(
+        offenses, 'rushingYards', 'rushingRank', leagueValues)
     return offenses
 }
 
@@ -112,46 +119,32 @@ function parseDefensiveData(data:string):{[key:string]: Defense}{
             defenses[stats[statPtr['Tm']]] = createDefenseFromStats(stats, statPtr)
         }
     })
+    defenses = calculateTeamRank(
+        defenses, 'passingYards', 'passingRank', leagueValues, true)
+    
+    defenses = calculateTeamRank(
+            defenses, 'rushingYards', 'rushingRank', leagueValues, true)
     return defenses
-}
-
-export const calculateTeamRanks = (
-    stats:{[key:string]:{name: string,passingRank: number, rushingRank: number, passingYards: number, rushingYards: number}},
-    inverse: boolean = false
-) => {
-    const leagueValues = ['Avg Team', 'Avg Tm/G', 'League Total']
-    Object.values(stats).map( stat => {
-        const passingFiler = Object.values(stats).filter(
-            x => leagueValues.includes(stat.name) || x.passingYards > stat.passingYards)
-        
-        stat.passingRank = inverse ? 
-             Object.values(stats).length - leagueValues.length - passingFiler.length  + 1
-            : passingFiler.length - leagueValues.length + 1
-        
-        const rushingFilter  = Object.values(stats).filter(
-            x => leagueValues.includes(stat.name) || x.rushingYards > stat.rushingYards)
-
-        stat.rushingRank = inverse ?
-            Object.values(stats).length - leagueValues.length - rushingFilter.length  + 1
-            : rushingFilter.length - leagueValues.length + 1
-    })
-    return stats
 }
 
 export const calculateTeamRank = (
     stats:{[key:string]:string | any},
     statKey: string,
+    rankKey: string,
     ignoreList : string[] = [],
     inverse: boolean = false
 ) => {
-    //const leagueValues = ['Avg Team', 'Avg Tm/G', 'League Total']
     Object.values(stats).map( stat => {
+        if(ignoreList.includes(stat.name)) {
+            stat[rankKey] = 0
+            return
+        }
         const betterTeams = Object.values(stats).filter(
             x => ignoreList.includes(stat.name) || x[statKey] > stat[statKey])
         
-        stat[statKey] = inverse ? 
-             Object.values(stats).length - ignoreList.length - betterTeams.length  + 1
-            : betterTeams.length - ignoreList.length + 1
+        stat[rankKey] = (inverse === true) ? 
+             Object.values(stats).length - ignoreList.length - betterTeams.length
+            : betterTeams.length + 1
     })
     return stats
 }
