@@ -1977,10 +1977,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.calculateTeamRank = exports.calculateTeamRanks = void 0;
+exports.calculateTeamRank = void 0;
 var core = __nccwpck_require__(2186);
 var nicknames_1 = __importDefault(__nccwpck_require__(9933));
 var teams_1 = __nccwpck_require__(267);
+var leagueValues = ['Avg Team', 'Avg Tm/G', 'League Total'];
 /**
  * This function takes a array of statHeaders and returns them as an object with the
  * position of the stat in the staHeaders array
@@ -2041,6 +2042,8 @@ function parseOffensiveData(data) {
             offenses[stats[statPtr['Tm']]] = createOffenseFromStats(stats, statPtr);
         }
     });
+    offenses = (0, exports.calculateTeamRank)(offenses, 'passingYards', 'passingRank', leagueValues);
+    offenses = (0, exports.calculateTeamRank)(offenses, 'rushingYards', 'rushingRank', leagueValues);
     return offenses;
 }
 function createDefenseFromStats(stats, statPtr) {
@@ -2082,33 +2085,22 @@ function parseDefensiveData(data) {
             defenses[stats[statPtr['Tm']]] = createDefenseFromStats(stats, statPtr);
         }
     });
+    defenses = (0, exports.calculateTeamRank)(defenses, 'passingYards', 'passingRank', leagueValues, true);
+    defenses = (0, exports.calculateTeamRank)(defenses, 'rushingYards', 'rushingRank', leagueValues, true);
     return defenses;
 }
-var calculateTeamRanks = function (stats, inverse) {
-    if (inverse === void 0) { inverse = false; }
-    var leagueValues = ['Avg Team', 'Avg Tm/G', 'League Total'];
-    Object.values(stats).map(function (stat) {
-        var passingFiler = Object.values(stats).filter(function (x) { return leagueValues.includes(stat.name) || x.passingYards > stat.passingYards; });
-        stat.passingRank = inverse ?
-            Object.values(stats).length - leagueValues.length - passingFiler.length + 1
-            : passingFiler.length - leagueValues.length + 1;
-        var rushingFilter = Object.values(stats).filter(function (x) { return leagueValues.includes(stat.name) || x.rushingYards > stat.rushingYards; });
-        stat.rushingRank = inverse ?
-            Object.values(stats).length - leagueValues.length - rushingFilter.length + 1
-            : rushingFilter.length - leagueValues.length + 1;
-    });
-    return stats;
-};
-exports.calculateTeamRanks = calculateTeamRanks;
-var calculateTeamRank = function (stats, statKey, ignoreList, inverse) {
+var calculateTeamRank = function (stats, statKey, rankKey, ignoreList, inverse) {
     if (ignoreList === void 0) { ignoreList = []; }
     if (inverse === void 0) { inverse = false; }
-    //const leagueValues = ['Avg Team', 'Avg Tm/G', 'League Total']
     Object.values(stats).map(function (stat) {
+        if (ignoreList.includes(stat.name)) {
+            stat[rankKey] = 0;
+            return;
+        }
         var betterTeams = Object.values(stats).filter(function (x) { return ignoreList.includes(stat.name) || x[statKey] > stat[statKey]; });
-        stat[statKey] = inverse ?
-            Object.values(stats).length - ignoreList.length - betterTeams.length + 1
-            : betterTeams.length - ignoreList.length + 1;
+        stat[rankKey] = (inverse === true) ?
+            Object.values(stats).length - ignoreList.length - betterTeams.length
+            : betterTeams.length + 1;
     });
     return stats;
 };
