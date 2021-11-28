@@ -1,6 +1,9 @@
+import core = require('@actions/core');
 import {Offense, Defense, Player,Team} from './types'
 import nicknames from './nicknames'
 import {teams as teamsCache} from './teams';
+
+const leagueValues = ['Avg Team', 'Avg Tm/G', 'League Total']
 
 /**
  * This function takes a array of statHeaders and returns them as an object with the 
@@ -28,6 +31,7 @@ import {teams as teamsCache} from './teams';
 }
 
 function createOffenseFromStats(stats: string[], statPtr: {[key:string]:number}): Offense {
+    core.info(`Creating Offense for ${stats[statPtr['Tm']]}`)
     return {
         team: stats[statPtr['Tm']],
         gamesPlayed: parseInt(stats[statPtr['G']], 10),
@@ -66,10 +70,16 @@ function parseOffensiveData(data:string):{[key:string]: Offense} {
             offenses[ stats[statPtr['Tm']]] = createOffenseFromStats(stats, statPtr)
         }
     })
+    offenses = calculateTeamRank(
+        offenses, 'passingYards', 'passingRank', leagueValues)
+    
+    offenses = calculateTeamRank(
+        offenses, 'rushingYards', 'rushingRank', leagueValues)
     return offenses
 }
 
 function createDefenseFromStats(stats: string[], statPtr: {[key:string]:number}): Defense{
+    core.info(`Creating Defense for ${stats[statPtr['Tm']]}`)
     return {
         team: stats[statPtr['Tm']],
         gamesPlayed: parseInt(stats[statPtr['G']], 10),
@@ -109,7 +119,34 @@ function parseDefensiveData(data:string):{[key:string]: Defense}{
             defenses[stats[statPtr['Tm']]] = createDefenseFromStats(stats, statPtr)
         }
     })
+    defenses = calculateTeamRank(
+        defenses, 'passingYards', 'passingRank', leagueValues, true)
+    
+    defenses = calculateTeamRank(
+            defenses, 'rushingYards', 'rushingRank', leagueValues, true)
     return defenses
+}
+
+export const calculateTeamRank = (
+    stats:{[key:string]:string | any},
+    statKey: string,
+    rankKey: string,
+    ignoreList : string[] = [],
+    inverse: boolean = false
+) => {
+    Object.values(stats).map( stat => {
+        if(ignoreList.includes(stat.name)) {
+            stat[rankKey] = 0
+            return
+        }
+        const betterTeams = Object.values(stats).filter(
+            x => ignoreList.includes(stat.name) || x[statKey] > stat[statKey])
+        
+        stat[rankKey] = (inverse === true) ? 
+             Object.values(stats).length - ignoreList.length - betterTeams.length
+            : betterTeams.length + 1
+    })
+    return stats
 }
 
 function createPlayerFromStats(
@@ -150,32 +187,26 @@ function createPlayerFromStats(
 function parsePlayerData(
     data: string,
     teams: Array<{name: string, id: string}>,
-    week: number
-): {[key: string]: Player} {
-    let lines = data.split('\n')
-    let statPtr:any = {};
-    let players: any = {};
+    week: number ): {[key: string]: Player} {
+        let lines = data.split('\n')
+        let statPtr:any = {};
+        let players: any = {};
 
-    lines.map((line, index) => {
-        const stats = line.split(',')
-        if(line.startsWith('Rk')) {
-            statPtr = createStatPointer(stats)
-            return
-        } 
+        lines.map((line, index) => {
+            const stats = line.split(',')
+            if(line.startsWith('Rk')) {
+                statPtr = createStatPointer(stats)
+                return
+            } 
 
-        // If the columns have been populated then we can begin to parse the data
-        if(Object.keys(statPtr).length > 0) { 
-            //use the columns to create an object for each player and push into array
-            let player = createPlayerFromStats(stats, statPtr, teams)
-            players[player.name] = {playerId:player.id, teamId:player.teamId, week, stats: player}
-        }
-    })
-    // const playerArray = Object.values(players).reduce((acc, player) => {
-    //     acc.push({playerId:player.id, teamId:player.teamId, week, stats: player})
-    //     return acc
-    // }, [] as Players)
-    
-    return players
+            // If the columns have been populated then we can begin to parse the data
+            if(Object.keys(statPtr).length > 0) { 
+                //use the columns to create an object for each player and push into array
+                let player = createPlayerFromStats(stats, statPtr, teams)
+                players[player.name] = {playerId:player.id, teamId:player.teamId, week, stats: player}
+            }
+        })
+        return players
 }
 
 /**
@@ -190,6 +221,7 @@ function createTeams(week: number, offenses:{[key:string]: Offense}, defenses:{[
     const teams:{[key:string]:Team} = {}
 
     offensesArray.map((offense) => {
+        core.info(`Creating team for ${offense.team}`)
         const currentTeam = teamsCache.filter(team => team.name === offense.team)
         const teamId = currentTeam.length > 0 ? currentTeam[0].id : null;
         teams[offense.team] = {name: offense.team, teamId, week, offense, defense: defenses[offense.team]}
@@ -198,10 +230,25 @@ function createTeams(week: number, offenses:{[key:string]: Offense}, defenses:{[
 }
 
 export default function parseData(offensiveStats: string, defensiveStats: string, playerStats: string, week: number){
+    core.startGroup('Parsing Offensive Data')
     const offenses = parseOffensiveData(offensiveStats);
-    const defenses = parseDefensiveData(defensiveStats);
-    const teams = createTeams(week, offenses, defenses);
+    core.info(`${Object.keys(offenses).length} offenses created`)
+    core.endGroup()
 
+    core.startGroup('Parsing Defensive Data')
+    const defenses = parseDefensiveData(defensiveStats);
+    core.info(`${Object.keys(defenses).length} defenses created`)
+    core.endGroup()
+
+    core.startGroup('Creating Teams')
+    const teams = createTeams(week, offenses, defenses);
+    core.info(`${Object.keys(teams).length} teams created`)
+    core.endGroup()
+
+    core.startGroup('Parsing Player Data')
     const players = parsePlayerData(playerStats, teamsCache, week);
+    core.info(`${Object.keys(players).length} players created`)
+    core.endGroup()
+
     return {teams, players}
 };

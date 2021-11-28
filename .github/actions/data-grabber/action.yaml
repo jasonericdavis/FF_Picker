@@ -1,0 +1,8 @@
+name: 'FF Picker Data Grabber'
+description: 'This action is used by the FF Picker to download, parse, and upload the data'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
+branding:
+  icon: 'download-cloud'
+  color: 'yellow'
