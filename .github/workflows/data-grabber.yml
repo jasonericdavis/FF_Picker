@@ -15,7 +15,8 @@ jobs:
         with:
           node-version: '12'
           cache: 'npm'
-      - run: npm install playwright
+      - run: npm install playwright-chromium
+      - run: npx playwright install
       - uses: ./.github/actions/data-grabber
         name: Download Data
         env:
