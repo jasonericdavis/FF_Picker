@@ -16,7 +16,7 @@ jobs:
           node-version: '16'
           cache: 'npm'
       - name: Install Playwright
-        run: npx playwright install --with-deps
+        run: npm playwright install --with-deps
       - uses: ./.github/actions/data-grabber
         name: Download Data
         env:
