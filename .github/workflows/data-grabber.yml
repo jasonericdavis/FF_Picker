@@ -13,7 +13,7 @@ jobs:
         name: Checkout
       - uses: actions/setup-node@v2
         with:
-          node-version: '12'
+          node-version: '16'
           cache: 'npm'
       - run: npm install playwright
       - run: npx playwright install
