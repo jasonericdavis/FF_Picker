@@ -15,7 +15,7 @@ jobs:
         with:
           node-version: '16'
           cache: 'npm'
-      - run: npx playwright install
+      - uses: microsoft/playwright-github-action@v1
       - uses: ./.github/actions/data-grabber
         name: Download Data
         env:
